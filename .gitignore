@@ -1,3 +1,5 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # Logs
 logs
 *.log
@@ -17,6 +19,16 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+jspm_packages/
+node_modules/
+
+# testing
+/coverage
+
 # nyc test coverage
 .nyc_output
 
@@ -29,12 +41,18 @@ bower_components
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (https://nodejs.org/api/addons.html)
+# production
+/build
 build/Release
 
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 # Dependency directories
-node_modules/
-jspm_packages/
 
 # TypeScript v1 declaration files
 typings/
@@ -59,3 +77,4 @@ typings/
 
 # next.js build output
 .next
+
