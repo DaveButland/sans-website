@@ -337,11 +337,11 @@ class Media extends React.Component {
     this.setState({ deleteImageId: imageId, showDeleteImage: true });
   }
 
-  handleCancelDeleteFolder() {
-    this.setState({ showDeleteFolder: false });
+  handleCancelDeleteImage() {
+    this.setState({ showDeleteImage: false });
   }
 
-	handleActionDeleteFolder() {
+	handleActionDeleteImage() {
 		this.deleteImage( this.state.deleteImageId ) ;
 
 		this.setState({ showDeleteImage: false });
@@ -398,20 +398,6 @@ class Media extends React.Component {
   }
 
   render() {
-
-		const	imagesNic = [ { caption: "Annie Bridge", src: "/private/email_9154.jpg", thumbnail:"/private/email_9154.jpg", thumbnailWidth: 200, thumbnailHeight: 200 }
-									 		, { caption: "Annie Door", src: "/private/email_9241.jpg", thumbnail: "/private/email_9241.jpg", thumbnailWidth: 200, thumbnailHeight: 200}
-							 		 		, { caption: "Annie Bike", src: "/private/email_9346.jpg", thumbnail: "/private/email_9346.jpg", thumbnailWidth: 200, thumbnailHeight: 200 }
-		               		, { caption: "White Gate", src: "/private/email_9536.jpg", thumbnail: "/private/email_9536.jpg", thumbnailWidth: 200, thumbnailHeight: 200 }
-		               		, { caption: "White Step", src: "/private/email_9597.jpg", thumbnail: "/private/email_9597.jpg", thumbnailWidth: 200, thumbnailHeight: 200 }
-									 		, { caption: "White Road", src: "/private/email_9617.jpg", thumbnail: "/private/email_9617.jpg", thumbnailWidth: 200, thumbnailHeight: 200 } 
-											] ;
-
-		const	imagesMark = [ { caption: "Black", src: "/private/edMarkFiddianImg0895x.jpg", thumbnail: "/private/edMarkFiddianImg0895x.jpg", thumbnailWidth: 200, thumbnailHeight: 200 }
-									 		 , { caption: "White", src: "/private/edMarkFiddianImg1054x.jpg", thumbnail: "/private/edMarkFiddianImg1054x.jpg", thumbnailWidth: 200, thumbnailHeight: 200 }
-									 	 	 , { caption: "Asian", src: "/private/edMarkFiddianImg1460x.jpg", thumbnail: "/private/edMarkFiddianImg1460x.jpg", thumbnailWidth: 200, thumbnailHeight: 200 }
-									 		 , { caption: "Kimono", src: "/private/edMarkFiddianImg1477x4.jpg", thumbnail: "/private/edMarkFiddianImg1477x4.jpg", thumbnailWidth: 200, thumbnailHeight: 200 }
-											 ] ;
 
 		if ( ( this.state.refreshImages ) && ( this.state.selectedFolder ) ) {
 			this.getImages() ;
