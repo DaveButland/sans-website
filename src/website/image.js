@@ -21,7 +21,7 @@ class Image extends React.Component {
     if (this.state.imageURI !== null)
       imgTag = (<div className="row">
                   <div className="small-9 small-centered columns" width="180">
-                    <img className="thumbnail" src={this.state.imageURI} style={{maxWidth:100}}></img>
+                    <img className="thumbnail" alt={this.state.id} src={this.state.imageURI} style={{maxWidth:100}}></img>
                   </div>
                 </div>);
     return imgTag;

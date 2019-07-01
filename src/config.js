@@ -1,6 +1,4 @@
-import Amplify from 'aws-amplify';
-
-Amplify.configure({
+const awsconfig = {
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
@@ -14,12 +12,10 @@ Amplify.configure({
 //        identityPoolRegion: 'eu-west-2',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'eu-west-2_Jnf5VZPOH',
-//				userPoolId: 'eu-west-2_dsz79h6th',  //preferred username
+        userPoolId: 'eu-west-2_iY09Irg1E',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '5487gmmkn1ta4sqstikfboi60l',
-//        userPoolWebClientId: '2tfshqj7rdq9n4igabo8qesneu', // preferred username
+        userPoolWebClientId: '2rqriamrfr66plh7l7arbs3bob',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
 //        mandatorySignIn: true,
@@ -28,7 +24,8 @@ Amplify.configure({
         // Note: if the secure flag is set to true, then the cookie transmission requires a secure protocol
         cookieStorage: {
         // REQUIRED - Cookie domain (only required if cookieStorage is provided)
-            domain: 'd3lgiu86qdcrk1.cloudfront.net',
+            domain: 'd3ml0ura1sl5yw.cloudfront.net' ,
+//            domain: domain,
         // OPTIONAL - Cookie path
             path: '/',
         // OPTIONAL - Cookie expiration in days
@@ -44,4 +41,6 @@ Amplify.configure({
         // OPTIONAL - Manually set the authentication flow type. Default is 'USER_SRP_AUTH'
 //        authenticationFlowType: 'USER_PASSWORD_AUTH'
     }
-});
+} ;
+
+module.exports = awsconfig ;

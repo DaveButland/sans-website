@@ -4,9 +4,6 @@ import { Container, Row, Col, ButtonToolbar, Button, ListGroup, Tab, Modal, Inpu
 import Dropzone from "../dropzone/Dropzone" ;
 import ImageFile from "./imageFile" ;
 
-const folderURL = "https://4uwwpb6ojf.execute-api.eu-west-2.amazonaws.com/live/folders" ;
-const imagesURL = "https://4uwwpb6ojf.execute-api.eu-west-2.amazonaws.com/live/images" ;
-
 function compareFolders(a, b) {
   // Use toUpperCase() to ignore character casing
   const folderNameA = a.folderName.toUpperCase();
@@ -43,6 +40,7 @@ class Media extends React.Component {
 			selectedFolderId: '',
 			selectedFolderName: 'Images',
 			selectedFolder: null,
+			deleteImageId: 0, 
       uploading: false,
       uploadProgress: {},
       successfullUploaded: false		};
@@ -59,12 +57,17 @@ class Media extends React.Component {
     this.handleCancelRenameFolder = this.handleCancelRenameFolder.bind(this);
 		this.handleActionRenameFolder = this.handleActionRenameFolder.bind(this);
 		
+    this.handleShowDeleteImage = this.handleShowDeleteImage.bind(this);
+    this.handleCancelDeleteImage = this.handleCancelDeleteImage.bind(this);
+		this.handleActionDeleteImage = this.handleActionDeleteImage.bind(this);
+
 		this.handleChange = this.handleChange.bind(this);
 		this.handleFolderSelect = this.handleFolderSelect.bind(this);
-		this.getFolders = this.getFolders.bind(this);
 
+		this.getFolders = this.getFolders.bind(this);
 		this.addImage = this.addImage.bind(this);
-		this.getImages = this.getImages.bind(this); 
+		this.getImages = this.getImages.bind(this);
+		this.deleteImage = this.deleteImage.bind(this);
 
 		this.onFilesAdded = this.onFilesAdded.bind(this);
 		this.uploadFiles = this.uploadFiles.bind(this); 
@@ -80,14 +83,14 @@ class Media extends React.Component {
 		var json = JSON.stringify(folder);
 
 		var xhr = new XMLHttpRequest();
-		xhr.open("POST", folderURL, true);
+		xhr.open("POST", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders', true);
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 		xhr.onerror = function () {
 			alert( "Error" ) ;
 		}
 		xhr.onload = function () {
-			if (xhr.readyState == 4 && xhr.status == "200") {
+			if (xhr.readyState === 4 && xhr.status === 200) {
 				// get the folder id and set it as the current folder
 				this.getFolders() ;
 			} else {
@@ -99,12 +102,12 @@ class Media extends React.Component {
 
 	getFolders() {
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", folderURL, true);
+		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders', true);
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 		xhr.onload = function () {
 			var folders = JSON.parse(xhr.responseText);
-			if (xhr.readyState == 4 && xhr.status == "200") {
+			if (xhr.readyState === 4 && xhr.status === 200) {
 				if ( folders.length > 0 ) {
 					folders.sort( compareFolders ) ;
 					this.setState({ folders: folders, selectedFolderId: '#'+folders[0].folderId, selectedFolderName: folders[0].folderName, selectedFolder: folders[0] } );
@@ -124,12 +127,12 @@ class Media extends React.Component {
 		var json = JSON.stringify( folder );
 	
 		var xhr = new XMLHttpRequest();
-		xhr.open("PUT", folderURL+'/'+folder.folderId, true);
+		xhr.open("PUT", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+folder.folderId, true);
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 		xhr.onload = function () {
-			var folders = JSON.parse(xhr.responseText);
-			if (xhr.readyState == 4 && xhr.status == "200") {
+//			var folders = JSON.parse(xhr.responseText);
+			if (xhr.readyState === 4 && xhr.status === 200) {
 				this.getFolders() ;
 			} else {
 				alert( "Error getting folders") ;
@@ -139,14 +142,14 @@ class Media extends React.Component {
 	}
 
 	deleteFolder = folder => {
-		var json = JSON.stringify(folder);
+//		var json = JSON.stringify(folder);
 
 		var xhr = new XMLHttpRequest();
-		xhr.open("DELETE", folderURL+'/'+folder.folderId, true);
+		xhr.open("DELETE", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+folder.folderId, true);
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 		xhr.onload = function () {
-			if (xhr.readyState == 4 && xhr.status == "200") {
+			if (xhr.readyState === 4 && xhr.status === 200) {
 				this.getFolders() ;
 			} else {
 				alert( "Error deleting folder") ;
@@ -168,8 +171,10 @@ class Media extends React.Component {
       promises.push(this.addImage(file));
     });
     try {
-      await Promise.all(promises);
+			await Promise.all(promises);
 
+			//remove files and refresh images
+			
       this.setState({ successfullUploaded: true, uploading: false });
     } catch (e) {
       // Not Production ready! Do some error handling here instead...
@@ -185,14 +190,15 @@ class Media extends React.Component {
 			var json = JSON.stringify(image);
 
 			var xhr = new XMLHttpRequest();
-			xhr.open( "POST", imagesURL, true ) ;
+			xhr.open( "POST", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images', true ) ;
 			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 			xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 			xhr.onload = function () {
-				if (xhr.readyState == 4 && xhr.status == "200") {
+				if (xhr.readyState === 4 && xhr.status === 200) {
 					var signedURL = JSON.parse( xhr.response ).signedURL ;
-					this.sendRequest(signedURL, file) ;
-					resolve(xhr.response);
+					this.sendRequest(signedURL, file).then( function( value )
+						{ resolve(xhr.response); }
+					) ;
 				} else {
 					alert( "Error creating new image") ;
 					reject(xhr.response);
@@ -204,12 +210,12 @@ class Media extends React.Component {
 
 	getImages() {
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", folderURL+'/'+this.state.selectedFolderId.slice(1)+'/images', true);
+		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+this.state.selectedFolderId.slice(1)+'/images', true);
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 		xhr.onload = function () {
 			var images = JSON.parse(xhr.responseText);
-			if (xhr.readyState == 4 && xhr.status == "200") {
+			if (xhr.readyState === 4 && xhr.status === 200) {
 				this.setState( { images: images, refreshImages: false } ) ;
 			} else {
 				alert( "Error getting images") ;
@@ -221,11 +227,11 @@ class Media extends React.Component {
 	// call delete image which will also delete the image from the S3 bucket.
 	deleteImage() {
 		var xhr = new XMLHttpRequest();
-		xhr.open("DELETE", folderURL+'/'+this.state.selectedfolderId+'/'+this.state.deleteImageId, true);
+		xhr.open("DELETE", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+this.state.selectedFolderId.slice(1)+'/images/'+this.state.deleteImageId, true);
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 		xhr.onload = function () {
-			if (xhr.readyState == 4 && xhr.status == "200") {
+			if (xhr.readyState === 4 && xhr.status === 200) {
 			  this.setState( { deleteImageId: '', refreshImages: true } );
 			} else {
 				alert( "Error deleting folder") ;
@@ -238,7 +244,7 @@ class Media extends React.Component {
     return new Promise((resolve, reject) => {
       
 			const req = new XMLHttpRequest();
-			const reqsigned = new XMLHttpRequest();
+//			const reqsigned = new XMLHttpRequest();
 
       req.upload.addEventListener("progress", event => {
         if (event.lengthComputable) {
@@ -284,7 +290,7 @@ class Media extends React.Component {
 	
 	handleFolderSelect = key => {
 		var folder = this.state.folders.find( function( folder ) {
-			return '#'+folder.folderId == key ;
+			return '#'+folder.folderId === key ;
 		}) ;
 
 		this.setState({ selectedFolderId: key, selectedFolderName: folder.folderName, selectedFolder: folder, refreshImages: true } ) ;
@@ -333,8 +339,8 @@ class Media extends React.Component {
 		this.setState({ showRenameFolder: false });
   }
 
-  handleShowDeleteImage( imageId ) {
-    this.setState({ deleteImageId: imageId, showDeleteImage: true });
+  handleShowDeleteImage = event => {
+    this.setState({ deleteImageId: event.target.id, showDeleteImage: true });
   }
 
   handleCancelDeleteImage() {
@@ -367,12 +373,14 @@ class Media extends React.Component {
     }
   }
 
+	/*
   renderProgress(file) {
 		const uploadProgress = this.state.uploadProgress[file.name];
 		return (
 			<ProgressBar variant="secondary" now={uploadProgress ? uploadProgress.percentage : 0} label={`${uploadProgress ? Math.round(uploadProgress.percentage) : 0}%`} />
 		)
 	}
+  */
 
   renderActions() {
     if (this.state.successfullUploaded) {
@@ -388,7 +396,7 @@ class Media extends React.Component {
     } else {
       return (
         <button
-          disabled={this.state.files.length < 0 || this.state.uploading}
+          disabled={this.state.files.length === 0 || this.state.uploading}
           onClick={this.uploadFiles}
         >
           Upload
@@ -403,11 +411,11 @@ class Media extends React.Component {
 			this.getImages() ;
 		}
 
-		const folders = this.state.folders ;
-		const images = this.state.images ;
+//		const folders = this.state.folders ;
+//		const images = this.state.images ;
 
 		let disabled = true ;
-		if ( folders.length > 0 ) {
+		if ( this.state.folders.length > 0 ) {
 			disabled = false ;
 		}
 
@@ -428,7 +436,7 @@ class Media extends React.Component {
 								<Button name="Delete" variant="danger" onClick={this.handleShowDeleteFolder} size="sm" disabled={disabled}>Delete</Button>
 							</ButtonToolbar>
 							<ListGroup>
-								{folders.map( folder => {
+								{this.state.folders.map( folder => {
 									return ( 
 										<ListGroup.Item id={folder.folderId} key={folder.folderId} action href={ "#"+folder.folderId }>{folder.folderName}</ListGroup.Item>
 									) ;									
@@ -476,10 +484,9 @@ class Media extends React.Component {
 						})}
             {this.state.images.map( image => {
               return (
-								<div>
 								<Row key={image.imageId}>
 									<Col md={4}>
-										<Image style={{height:200}} src={'https://d3lgiu86qdcrk1.cloudfront.net/images/'+image.folderId+'/'+image.imageId} />
+										<Image style={{height:200}} src={'https://'+process.env.REACT_APP_HTML_DOMAIN+'/private/'+image.folderId+'/'+image.imageId} />
 									</Col>
 									<Col>
 										<Form.Group controlId={image.imageId}>
@@ -488,15 +495,14 @@ class Media extends React.Component {
 					            <Form.Label>Description</Form.Label>
 											<Form.Control type="text" placeholder="Enter Description" value={this.state.description} onChange={this.handleChange} />
 											<Button size="sm" disabled>Save</Button>
-											<Button size="sm" variant="danger" disabled>Delete</Button>
+											<Button id={image.imageId} size="sm" variant="danger" onClick={this.handleShowDeleteImage}>Delete</Button>
 					          </Form.Group>
 									</Col>
 								</Row>
-								</div>
               );
 						})}
 			 			<Tab.Content>
-								{folders.map( folder => {
+								{this.state.folders.map( folder => {
 									return ( 
 		        				<Tab.Pane key={folder.folderId} eventKey={"#"+folder.id}>
     	 				   		</Tab.Pane>
@@ -583,7 +589,7 @@ class Media extends React.Component {
 				</Modal.Footer>
 			</Modal>
 
-			<Modal show={this.state.showDeletImage} onHide={this.handleCancelDeleteImage}>
+			<Modal show={this.state.showDeleteImage} onHide={this.handleCancelDeleteImage}>
 				<Modal.Header closeButton>
 					<Modal.Title>Delete Image</Modal.Title>
 				</Modal.Header>

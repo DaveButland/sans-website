@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { Auth} from "aws-amplify" ;
 //import uuid from "uuid" ;
-import config from "./config" ;
 //import "./Signup.css";
 
 class SignUp extends Component {
@@ -43,6 +42,9 @@ class SignUp extends Component {
 	
 		try {
 //			const username = uuid.v1() ;
+
+//			console.log( config.Auth.)
+
 			const newUser = await Auth.signUp({
 				username: this.state.email,
 				password: this.state.password,

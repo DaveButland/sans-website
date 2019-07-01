@@ -1,4 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+/public/private
 
 # Logs
 logs
@@ -74,7 +75,10 @@ typings/
 
 # dotenv environment variables file
 .env
+*.env
 
 # next.js build output
 .next
 
+#Why isn't this working?
+config.js

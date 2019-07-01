@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Form, Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom" ;
-import config from "./config" ;
-import { Auth } from "aws-amplify" ;
+import Auth from "@aws-amplify/auth" ;
 
 class SignIn extends Component {
   constructor(props) {
@@ -44,10 +43,7 @@ class SignIn extends Component {
 		event.preventDefault();
 	
 		try {
-			this.setState( { stage: 'signing in' } ) ;
 			const user = await Auth.signIn(this.state.email, this.state.password);
-			this.setState( { user: JSON.stringify( user ) } ) ;
-			this.setState( { stage: 'signed in' } ) ;
 			if (user.challengeName === 'SMS_MFA' || 
 				user.challengeName === 'SOFTWARE_TOKEN_MFA') {
 				/*
@@ -85,12 +81,8 @@ class SignIn extends Component {
 				Auth.setupTOTP(user);
 			} else {
 							// The user directly signs in
-//				console.log(user);
-				this.setState( { stage: 'get session' } ) ;
-				let session = await Auth.currentSession() ;
-				this.setState( { stage: 'got session' } ) ;
+				await Auth.currentSession() ;
 				
-//				console.log( session ) ;
 				this.props.userHasAuthenticated(true) ;
 				this.props.history.push("/");
 			} 
@@ -145,7 +137,7 @@ class SignIn extends Component {
  		      >
 	      		Sign In
           </Button>
-					<Button block variant="secondary" onClick={this.handleActionForgot} disable>Forgot Password</Button>
+					<Button block variant="secondary" onClick={this.handleActionForgot} disabled>Forgot Password</Button>
 					<Button block variant="secondary" onClick={this.handleActionSignup}>Sign Up</Button>
  				</Form>	
       </Container>

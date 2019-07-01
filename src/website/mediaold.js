@@ -2,8 +2,6 @@ import React from "react";
 import { Container, Row, Col, Button, ListGroup, Tab, Modal, InputGroup, FormControl, Nav }  from "react-bootstrap";
 import { Cookies } from "react-cookie";
 import Gallery from "react-grid-gallery" ;
-import config from "./config" ;
-import { Auth } from "aws-amplify" ;
 
 const folderURL = "https://4uwwpb6ojf.execute-api.eu-west-2.amazonaws.com/live/folders" ;
 

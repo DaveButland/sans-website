@@ -33,7 +33,7 @@ class Articles extends React.Component {
 		xhr.setRequestHeader('Authorization', 'token');
 		xhr.onload = function () {
 			var folders = JSON.parse(xhr.responseText);
-			if (xhr.readyState == 4 && xhr.status == "201") {
+			if (xhr.readyState === 4 && xhr.status === "201") {
 				this.setState({ folders: folders } );
 			} else {
 				alert( "Error creating folder") ;
@@ -49,7 +49,7 @@ class Articles extends React.Component {
 		xhr.setRequestHeader('Authorization', 'token');
 		xhr.onload = function () {
 			var folders = JSON.parse(xhr.responseText);
-			if (xhr.readyState == 4 && xhr.status == "201") {
+			if (xhr.readyState === 4 && xhr.status === "201") {
 				this.setState({ folders: folders } );
 			} else {
 				alert( "Error creating folder") ;

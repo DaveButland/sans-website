@@ -1,12 +1,13 @@
 import React from "react"; //basic react
-import { Link, withRouter } from "react-router-dom" ; //react routing
+import { withRouter } from "react-router-dom" ; //react routing
 import ReactGA from "react-ga" ; //google analytics
 import AppliedRoute from "./AppliedRoute" ; //
 
 import { Container, Navbar, Nav, NavDropdown, Form, Button } from "react-bootstrap" ;
 
-import config from "./website/config" ;
-import { Auth } from "aws-amplify" ;
+import Auth from "@aws-amplify/auth" ;
+import Amplify from 'aws-amplify';
+import awsconfig from './config.js'
 
 import SignIn from "./website/signin" ;
 import SignUp from "./website/signup" ;
@@ -20,9 +21,13 @@ import NotFound from "./website/notfound" ;
 import Test from "./website/Test" ;
 
 import { Route, Switch } from "react-router-dom";
+//import { useCookies } from 'react-cookie';
+import cookie from "react-cookies";
 
 ReactGA.initialize('UA-140067414-1');
 ReactGA.pageview(window.location.pathname + window.location.search);
+
+Amplify.configure(awsconfig);
 
 class App extends React.Component {
 
@@ -36,11 +41,46 @@ class App extends React.Component {
 	}
 
 	async getCookies( accessToken ) {
+		
 		const reqsigned = new XMLHttpRequest();
-		reqsigned.open( "GET", 'https://4uwwpb6ojf.execute-api.eu-west-2.amazonaws.com/live/getsignedcookie?domain=d31ajfwgnb8bq0.cloudfront.net', false ) ;
+		reqsigned.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/cookies?domain='+process.env.REACT_APP_HTML_DOMAIN, false ) ;
 		reqsigned.setRequestHeader( "Authorization", "Bearer "+accessToken ) ;
-//		reqsigned.send() ;
-//		let signedURL = reqsigned.response ;
+		reqsigned.send() ;
+		let values = JSON.parse( reqsigned.response ) ;
+		
+		cookie.save( "CloudFront-Key-Pair-Id", values["CloudFront-Key-Pair-Id"] ) ;
+		cookie.save( "CloudFront-Policy", values["CloudFront-Policy"] ) ;
+		cookie.save( "CloudFront-Signature", values["CloudFront-Signature"] ) ;
+	}
+
+	async removeCookies() {
+		cookie.remove( "CloudFront-Key-Pair-Id" ) ;
+		cookie.remove( "CloudFront-Policy" ) ;
+		cookie.remove( "CloudFront-Signature" ) ;
+	}
+
+	getCookies1( accessToken ) {
+		return new Promise((resolve, reject) => {
+
+			var xhr = new XMLHttpRequest();
+			xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/cookies?domain='+process.env.REACT_APP_HTML_DOMAIN, true ) ;
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken );
+			xhr.onload = function () {
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					let values = JSON.parse( xhr.response ) ;
+		
+					cookie.save( "CloudFront-Key-Pair-Id", values["CloudFront-Key-Pair-Id"] ) ;
+					cookie.save( "CloudFront-Policy", values["CloudFront-Policy"] ) ;
+					cookie.save( "CloudFront-Signature", values["CloudFront-Signature"] ) ;
+					resolve(xhr.response);
+				} else {
+					alert( "Error creating new image") ;
+					reject(xhr.response);
+				}
+			}
+			xhr.send();
+		});
 	}
 
 	async componentDidMount() {
@@ -50,10 +90,12 @@ class App extends React.Component {
 			let idToken = session.getIdToken().getJwtToken() ;
 			this.setState({ accessToken: accessToken, idToken: idToken });
 
+			await this.getCookies1(accessToken) ;
 			this.userHasAuthenticated(true);
-//			await this.getCookies(accessToken) ;
 		}
 		catch(e) {
+			this.setState({accessToken: null, idToken: null });
+			this.removeCookies() ;
 			if (e !== 'No current user') {
 				alert(e);
 			}
@@ -81,7 +123,7 @@ class App extends React.Component {
 			idToken: this.state.idToken
 		};
 
-		console.log( "App: "+this.state.isAuthenticated+" "+Date.now() ) ;
+//		console.log( "App: "+this.state.isAuthenticated+" "+Date.now() ) ;
 		
 		return (
 			!this.state.isAuthenticating &&

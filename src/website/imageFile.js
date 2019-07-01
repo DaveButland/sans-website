@@ -22,7 +22,7 @@ class ImageFile extends React.Component {
   buildImgTag(){
     let imgTag = null;
     if (this.state.imageURI !== null)
-      imgTag = ( <img className="thumbnail" src={this.state.imageURI} style={{height:200}}></img> );
+      imgTag = ( <img className="thumbnail" alt={this.state.id} src={this.state.imageURI} style={{height:200}}></img> );
     return imgTag;
 	}
 	
