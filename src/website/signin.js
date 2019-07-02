@@ -8,7 +8,7 @@ class SignIn extends Component {
     super(props);
 
     this.state = {
-      email: "",
+      username: "",
 			password: "", 
 			authenticated: false,
 			user: "",
@@ -30,7 +30,7 @@ class SignIn extends Component {
 	}
 
   validateForm() {
-    return this.state.email.length > 0 && this.state.password.length > 0;
+    return this.state.username.length > 0 && this.state.password.length > 0;
   }
 
   handleChange = event => {
@@ -43,7 +43,7 @@ class SignIn extends Component {
 		event.preventDefault();
 	
 		try {
-			const user = await Auth.signIn(this.state.email, this.state.password);
+			const user = await Auth.signIn(this.state.username, this.state.password);
 			if (user.challengeName === 'SMS_MFA' || 
 				user.challengeName === 'SOFTWARE_TOKEN_MFA') {
 				/*
@@ -111,13 +111,13 @@ class SignIn extends Component {
       <Container>
 				<h1>Sign In</h1>
         <Form onSubmit={this.handleSubmit}>
-          <Form.Group controlId="email">
-            <Form.Label>Email address</Form.Label>
+          <Form.Group controlId="username">
+            <Form.Label>Username</Form.Label>
 						<Form.Control 
 							autoFocus
-							type="email" 
-							placeholder="Enter email" 
-							value={this.state.email}
+							type="username" 
+							placeholder="Enter username" 
+							value={this.state.username}
 							onChange={this.handleChange}
 						/>
           </Form.Group>

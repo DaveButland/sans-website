@@ -25,6 +25,7 @@ const awsconfig = {
         cookieStorage: {
         // REQUIRED - Cookie domain (only required if cookieStorage is provided)
             domain: 'd3ml0ura1sl5yw.cloudfront.net' ,
+//					domain: 'localhost',
 //            domain: domain,
         // OPTIONAL - Cookie path
             path: '/',

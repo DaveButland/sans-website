@@ -97,7 +97,7 @@ class App extends React.Component {
 			this.setState({accessToken: null, idToken: null });
 			this.removeCookies() ;
 			if (e !== 'No current user') {
-				alert(e);
+				alert( 'Get Session ' + e );
 			}
 		}
 	
@@ -129,7 +129,7 @@ class App extends React.Component {
 			!this.state.isAuthenticating &&
       <Container fluid>
         <Navbar variant="light" bg="light" expand="lg" fixed="top">
-          <Navbar.Brand href="/">Sans Caffeine</Navbar.Brand>
+          <Navbar.Brand href="/">Sans Website</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
@@ -155,8 +155,8 @@ class App extends React.Component {
           <Route exact path="/" component={Home} />
 					<Route path="/test" component={Test} />
 					<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
+					<AppliedRoute path="/signup" component={SignUp}  props={childProps}/>
 					<AppliedRoute path="/media" component={Media} props={childProps}/>
-					<Route path="/signup" component={SignUp} />
 					<Route path="/profile" component={Profile} />
 					<Route path="/albums" component={Albums} />
 					<Route path="/articles" component={Articles} />

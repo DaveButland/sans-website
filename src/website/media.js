@@ -353,6 +353,7 @@ class Media extends React.Component {
 		this.setState({ showDeleteImage: false });
   }
 
+	/*
 	renderProgress(file) {
     const uploadProgress = this.state.uploadProgress[file.name];
     if (this.state.uploading || this.state.successfullUploaded) {
@@ -371,16 +372,15 @@ class Media extends React.Component {
         </div>
       );
     }
-  }
-
-	/*
+	}
+	*/
+	
   renderProgress(file) {
 		const uploadProgress = this.state.uploadProgress[file.name];
 		return (
 			<ProgressBar variant="secondary" now={uploadProgress ? uploadProgress.percentage : 0} label={`${uploadProgress ? Math.round(uploadProgress.percentage) : 0}%`} />
 		)
 	}
-  */
 
   renderActions() {
     if (this.state.successfullUploaded) {

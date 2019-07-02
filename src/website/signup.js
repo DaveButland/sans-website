@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { Auth} from "aws-amplify" ;
-//import uuid from "uuid" ;
 //import "./Signup.css";
 
 class SignUp extends Component {
@@ -9,6 +8,7 @@ class SignUp extends Component {
     super(props);
 
     this.state = {
+			username: "", 
       email: "",
       password: "",
       confirmPassword: "",
@@ -19,6 +19,7 @@ class SignUp extends Component {
 
   validateForm() {
     return (
+			this.state.username.length > 0 &&
       this.state.email.length > 0 &&
       this.state.password.length > 0 &&
       this.state.password === this.state.confirmPassword
@@ -41,12 +42,8 @@ class SignUp extends Component {
 		this.setState({ isLoading: true });
 	
 		try {
-//			const username = uuid.v1() ;
-
-//			console.log( config.Auth.)
-
 			const newUser = await Auth.signUp({
-				username: this.state.email,
+				username: this.state.username,
 				password: this.state.password,
 				attributes: { email: this.state.email }
 			});
@@ -67,8 +64,8 @@ class SignUp extends Component {
 		this.setState({ isLoading: true });
 	
 		try {
-			await Auth.confirmSignUp(this.state.email, this.state.confirmationCode);
-			await Auth.signIn(this.state.email, this.state.password);
+			await Auth.confirmSignUp(this.state.username, this.state.confirmationCode);
+			await Auth.signIn(this.state.username, this.state.password);
 	
 			this.props.userHasAuthenticated(true);
 			this.props.history.push("/");
@@ -101,10 +98,18 @@ class SignUp extends Component {
   renderForm() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
+          <Form.Control
+            autoFocus
+            type="username"
+            value={this.state.username}
+            onChange={this.handleChange}
+          />
+        </Form.Group>
         <Form.Group controlId="email">
           <Form.Label>Email</Form.Label>
           <Form.Control
-            autoFocus
             type="email"
             value={this.state.email}
             onChange={this.handleChange}
