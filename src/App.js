@@ -16,7 +16,6 @@ import Media from "./website/media" ;
 import Profile from "./website/profile" ;
 import Albums from "./website/albums" ;
 import Articles from "./website/articles" ;
-import Image from "./website/image" ;
 import NotFound from "./website/notfound" ;
 import Test from "./website/Test" ;
 
@@ -24,7 +23,7 @@ import { Route, Switch } from "react-router-dom";
 //import { useCookies } from 'react-cookie';
 import cookie from "react-cookies";
 
-ReactGA.initialize('UA-140067414-1');
+ReactGA.initialize('UA-143274884-1');
 ReactGA.pageview(window.location.pathname + window.location.search);
 
 Amplify.configure(awsconfig);

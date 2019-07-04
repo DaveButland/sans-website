@@ -1,4 +1,6 @@
 import React from "react";
+import { Image } from "react-bootstrap" ;
+
 //import Container from "react-bootstrap/Container";
 //import Hermite_class from 'hermite-resize';
 //import { AutoScaling } from "aws-sdk/clients/all";
@@ -21,8 +23,9 @@ class ImageFile extends React.Component {
   
   buildImgTag(){
     let imgTag = null;
-    if (this.state.imageURI !== null)
-      imgTag = ( <img className="thumbnail" alt={this.state.id} src={this.state.imageURI} style={{height:200}}></img> );
+		if (this.state.imageURI !== null)
+			return ( <Image style={{height:200}} alt={this.state.id} src={this.state.imageURI}/> ) ;
+//			imgTag = ( <img className="thumbnail" alt={this.state.id} src={this.state.imageURI}></img> );
     return imgTag;
 	}
 	

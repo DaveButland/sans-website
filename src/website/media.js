@@ -1,8 +1,7 @@
 import React from "react";
-import { Container, Row, Col, ButtonToolbar, Button, ListGroup, Tab, Modal, InputGroup, FormControl, Image, ProgressBar, Form }  from "react-bootstrap";
-//import Gallery from "react-grid-gallery" ;
-import Dropzone from "../dropzone/Dropzone" ;
-import ImageFile from "./imageFile" ;
+import { Container, Row, Col, ButtonToolbar, Button, ListGroup, Tab, Modal, InputGroup, FormControl, Card, CardColumns, ProgressBar }  from "react-bootstrap";
+import CircularProgressBar from "../CircularProgressBar/CircularProgressBar" ;
+import "./media.css";
 
 function compareFolders(a, b) {
   // Use toUpperCase() to ignore character casing
@@ -43,7 +42,9 @@ class Media extends React.Component {
 			deleteImageId: 0, 
       uploading: false,
       uploadProgress: {},
-      successfullUploaded: false		};
+			successfullUploaded: false,	
+			hightlight: false
+		};
 
     this.handleShowAddFolder = this.handleShowAddFolder.bind(this);
 		this.handleCancelAddFolder = this.handleCancelAddFolder.bind(this);
@@ -71,12 +72,78 @@ class Media extends React.Component {
 
 		this.onFilesAdded = this.onFilesAdded.bind(this);
 		this.uploadFiles = this.uploadFiles.bind(this); 
+		this.uploadFilesNow = this.uploadFilesNow.bind(this);
 		this.sendRequest = this.sendRequest.bind(this);
 		this.renderActions = this.renderActions.bind(this) ;
+
+//    this.fileInputRef = React.createRef();
+
+//    this.openFileDialog = this.openFileDialog.bind(this);
+//    this.onFilesAdded = this.onFilesAdded.bind(this);
+    this.onDragOver = this.onDragOver.bind(this);
+    this.onDragLeave = this.onDragLeave.bind(this);
+    this.onDrop = this.onDrop.bind(this);
 
 		this.getFolders() ;
 	}
 	
+	/*
+  openFileDialog() {
+    if (this.props.disabled) return;
+    this.fileInputRef.current.click();
+	}
+	*/
+
+  onDragOver(evt) {
+    evt.preventDefault();
+
+    if (this.state.uploading) return;
+
+    this.setState({ hightlight: true });
+  }
+
+  onDragLeave() {
+    this.setState({ hightlight: false });
+  }
+
+  onDrop(event) {
+		event.preventDefault();
+		
+		if (this.state.uploading) return;
+
+    const files = event.dataTransfer.files;
+		const array = this.fileListToArray(files);
+		this.onFilesAdded( array ) ;
+//		this.uploadFilesNow( array ) ;
+
+		this.setState({ hightlight: false });
+	}
+
+  fileListToArray(list) {
+    const array = [];
+    for (var i = 0; i < list.length; i++) {
+      array.push(list.item(i));
+    }
+    return array;
+	}
+
+	/*
+  onFilesAdded(evt) {
+    const files = evt.target.files;
+
+		if (this.props.onFilesAdded) {
+      const array = this.fileListToArray(files);
+      this.props.onFilesAdded(array);
+    }
+	}
+	*/
+
+  onFilesAdded(files) {
+    this.setState(prevState => ({
+      files: prevState.files.concat(files)
+		}));
+	}
+
 	addFolder( name ) {
 		var folder = {};
 		folder.folderName = name ;
@@ -158,11 +225,23 @@ class Media extends React.Component {
 		xhr.send();
 	}
 
-  onFilesAdded(files) {
-    this.setState(prevState => ({
-      files: prevState.files.concat(files)
-    }));
-  }
+	async uploadFilesNow ( files ) {
+	this.setState({ uploadProgress: {}, uploading: true });
+	const promises = [];
+	files.forEach(file => {
+		promises.push(this.addImage(file));
+	});
+	try {
+		await Promise.all(promises);
+
+		//remove files and refresh images
+		
+		this.setState({ successfullUploaded: true, uploading: false });
+	} catch (e) {
+		// Not Production ready! Do some error handling here instead...
+		this.setState({ successfullUploaded: true, uploading: false });
+	}
+}
 
   async uploadFiles() {
     this.setState({ uploadProgress: {}, uploading: true });
@@ -175,10 +254,10 @@ class Media extends React.Component {
 
 			//remove files and refresh images
 			
-      this.setState({ successfullUploaded: true, uploading: false });
+      this.setState({ successfullUploaded: true, uploading: false, refreshImages: true, files: [] });
     } catch (e) {
       // Not Production ready! Do some error handling here instead...
-      this.setState({ successfullUploaded: true, uploading: false });
+      this.setState({ successfullUploaded: true, uploading: false, refreshImages: true, files: [] });
     }
 	}
 	
@@ -289,6 +368,7 @@ class Media extends React.Component {
 	}
 	
 	handleFolderSelect = key => {
+		this.setState( { files: [] } ) ;
 		var folder = this.state.folders.find( function( folder ) {
 			return '#'+folder.folderId === key ;
 		}) ;
@@ -382,6 +462,13 @@ class Media extends React.Component {
 		)
 	}
 
+	renderProgressCircle(file) {
+		const uploadProgress = this.state.uploadProgress[file.name];
+		return (
+			<CircularProgressBar strokeWidth="10" sqSize="200" percentage={uploadProgress ? uploadProgress.percentage : 0}/>
+		) ;
+	}
+
   renderActions() {
     if (this.state.successfullUploaded) {
       return (
@@ -419,7 +506,7 @@ class Media extends React.Component {
 			disabled = false ;
 		}
 
-    return (
+		return (
       <div>
 			<Container fluid>
 					<h3>Media Library</h3>
@@ -445,70 +532,39 @@ class Media extends React.Component {
     				</Col>
     				<Col sm={9}>
 						<h4>{this.state.selectedFolderName}</h4>
-						<Row>
-						<div className="Content">
-          		<div>
-            		<Dropzone
-              		onFilesAdded={this.onFilesAdded}
-              		disabled={this.state.uploading || this.state.successfullUploaded}
-            		/>
-          		</div>
-						</div>
-						</Row>
-						<div className="Actions">{this.renderActions()}</div>
-            {this.state.files.map(file => {
+						<ButtonToolbar>
+							<Button size="sm" disabled={this.state.uploading}>Add</Button>
+							<Button size="sm" disabled={this.state.files.length === 0} onClick={this.uploadFiles}>Upload</Button>
+						</ButtonToolbar>
+						<div
+						  className={`Dropzone ${this.state.hightlight ? "Highlight" : ""}`}
+							onDragOver={this.onDragOver}
+							onDragLeave={this.onDragLeave}
+							onDrop={this.onDrop}
+							style={{ cursor: this.props.disabled ? "default" : "pointer" }}
+//							onFilesAdded={this.onFilesAdded}
+							disabled={this.state.uploading}
+						>					
+						<CardColumns>
+	            {this.state.files.map( file => {
               return (
-								<div>
-								<Row key={file.name}>
-									<Col>
-										<ImageFile file={file}/>
-									</Col>
-									<Col>
-										<Form.Group controlId={file.name}>
-											<Form.Label>Title</Form.Label>
-											<Form.Control type="text" placeholder="Enter Title" value={this.state.title} onChange={this.handleChange} />
-					            <Form.Label>Description</Form.Label>
-											<Form.Control type="text" placeholder="Enter Description" value={this.state.description} onChange={this.handleChange} />
-											<Button size="sm" disabled>Save</Button>
-											<Button size="sm" variant="danger" disabled>Delete</Button>
-					          </Form.Group>
-									</Col>
-								</Row>
-								<Row key={'progress'+file.name}>
-									<Col>
+								<Card key={file.id}>
+									<Card.Img src={URL.createObjectURL(file)} alt="Card Image"/>
+									<Card.ImgOverlay>
 										{this.renderProgress(file)}
-									</Col>
-								</Row>
-								</div>
+									</Card.ImgOverlay>
+								</Card>
               );
 						})}
             {this.state.images.map( image => {
-              return (
-								<Row key={image.imageId}>
-									<Col md={4}>
-										<Image style={{height:200}} src={'https://'+process.env.REACT_APP_HTML_DOMAIN+'/private/'+image.folderId+'/'+image.imageId} />
-									</Col>
-									<Col>
-										<Form.Group controlId={image.imageId}>
-											<Form.Label>Title</Form.Label>
-											<Form.Control type="text" placeholder="Enter Title" value={this.state.title} onChange={this.handleChange} />
-					            <Form.Label>Description</Form.Label>
-											<Form.Control type="text" placeholder="Enter Description" value={this.state.description} onChange={this.handleChange} />
-											<Button size="sm" disabled>Save</Button>
-											<Button id={image.imageId} size="sm" variant="danger" onClick={this.handleShowDeleteImage}>Delete</Button>
-					          </Form.Group>
-									</Col>
-								</Row>
-              );
+             return (
+								<Card key={image.imageId} draggable>
+									<Card.Img src={"/private/"+image.folderId+"/"+image.imageId+".jpeg"} alt="Card Image"/>
+								</Card>
+             );
 						})}
-			 			<Tab.Content>
-								{this.state.folders.map( folder => {
-									return ( 
-		        				<Tab.Pane key={folder.folderId} eventKey={"#"+folder.id}>
-    	 				   		</Tab.Pane>
-									) ;
-									})}	
-    					</Tab.Content>
+						</CardColumns>
+						</div>	
     				</Col>
  					</Row>
 				</Tab.Container>
@@ -530,6 +586,7 @@ class Media extends React.Component {
 							aria-describedby="folderlabel"
 							value={this.state.addFolderName}
 							onChange={this.handleChange}
+							autoFocus
     				/>
 				  </InputGroup>
 				</Modal.Body>
