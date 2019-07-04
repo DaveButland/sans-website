@@ -18,6 +18,7 @@ import Albums from "./website/albums" ;
 import Articles from "./website/articles" ;
 import NotFound from "./website/notfound" ;
 import Test from "./website/Test" ;
+import Drag from "./website/drag" ;
 
 import { Route, Switch } from "react-router-dom";
 //import { useCookies } from 'react-cookie';
@@ -134,10 +135,13 @@ class App extends React.Component {
             <Nav className="mr-auto">
 							<NavDropdown title="Portfolio" id="portfolio">
 				        <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
-        				<NavDropdown.Item href="/media">Media</NavDropdown.Item>
         				<NavDropdown.Item href="/articles">Articles</NavDropdown.Item>
+        				<NavDropdown.Item href="/media">Media</NavDropdown.Item>
        				 	<NavDropdown.Item href="/albums">Albums</NavDropdown.Item>
 				      </NavDropdown>
+							<NavDropdown title="Tests" id="test">
+								<NavDropdown.Item href="/drag">Drag</NavDropdown.Item>
+							</NavDropdown>
             </Nav>
             <Form inline>
               <Form.Control type="text" placeholder="Search" className="mr-sm-2" />
@@ -152,14 +156,15 @@ class App extends React.Component {
 			
 				<Switch>
           <Route exact path="/" component={Home} />
+					<Route path="/profile" component={Profile} />
+					<Route path="/articles" component={Articles} />
+					<AppliedRoute path="/media" component={Media} props={childProps}/>
+					<AppliedRoute path="/albums" component={Albums} props={childProps}/>
+					<Route path="/image" component={Image} />
+					<Route path="/drag" component={Drag} />
 					<Route path="/test" component={Test} />
 					<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
 					<AppliedRoute path="/signup" component={SignUp}  props={childProps}/>
-					<AppliedRoute path="/media" component={Media} props={childProps}/>
-					<Route path="/profile" component={Profile} />
-					<Route path="/albums" component={Albums} />
-					<Route path="/articles" component={Articles} />
-					<Route path="/image" component={Image} />
 					<Route component={NotFound} />
 				</Switch>
 			</Container>

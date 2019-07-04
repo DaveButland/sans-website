@@ -249,7 +249,8 @@ class Media extends React.Component {
     this.state.files.forEach(file => {
       promises.push(this.addImage(file));
     });
-    try {
+		
+		try {
 			await Promise.all(promises);
 
 			//remove files and refresh images
@@ -517,10 +518,10 @@ class Media extends React.Component {
   				<Row>
     				<Col sm={3}>
 							<h4>Folders</h4>
-							<ButtonToolbar>
-								<Button name="Add" onClick={this.handleShowAddFolder} size="sm">Add</Button>
-								<Button name="Rename" variant="secondary" onClick={this.handleShowRenameFolder} size="sm" disabled={disabled}>Rename</Button>
-								<Button name="Delete" variant="danger" onClick={this.handleShowDeleteFolder} size="sm" disabled={disabled}>Delete</Button>
+							<ButtonToolbar className="mb-2">
+								<Button className="mr-2" name="Add" onClick={this.handleShowAddFolder} size="sm">Add</Button>
+								<Button className="mr-2" name="Rename" variant="secondary" onClick={this.handleShowRenameFolder} size="sm" disabled={disabled}>Rename</Button>
+								<Button  className="mr-2" name="Delete" variant="danger" onClick={this.handleShowDeleteFolder} size="sm" disabled={disabled}>Delete</Button>
 							</ButtonToolbar>
 							<ListGroup>
 								{this.state.folders.map( folder => {
@@ -532,9 +533,9 @@ class Media extends React.Component {
     				</Col>
     				<Col sm={9}>
 						<h4>{this.state.selectedFolderName}</h4>
-						<ButtonToolbar>
-							<Button size="sm" disabled={this.state.uploading}>Add</Button>
-							<Button size="sm" disabled={this.state.files.length === 0} onClick={this.uploadFiles}>Upload</Button>
+						<ButtonToolbar className="mb-2" >
+							<Button className="mr-2" size="sm" disabled={this.state.uploading}>Add</Button>
+							<Button className="mr-2" size="sm" disabled={this.state.files.length === 0||this.state.uploading} onClick={this.uploadFiles}>Upload</Button>
 						</ButtonToolbar>
 						<div
 						  className={`Dropzone ${this.state.hightlight ? "Highlight" : ""}`}
@@ -559,7 +560,7 @@ class Media extends React.Component {
             {this.state.images.map( image => {
              return (
 								<Card key={image.imageId} draggable>
-									<Card.Img src={"/private/"+image.folderId+"/"+image.imageId+".jpeg"} alt="Card Image"/>
+									<Card.Img src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId} alt="Card Image"/>
 								</Card>
              );
 						})}
