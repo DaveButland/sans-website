@@ -43,7 +43,9 @@ class Media extends React.Component {
       uploading: false,
       uploadProgress: {},
 			successfullUploaded: false,	
-			hightlight: false
+			hightlight: false,
+			selectedImages: 0,
+			isLoading: true 
 		};
 
     this.handleShowAddFolder = this.handleShowAddFolder.bind(this);
@@ -61,6 +63,7 @@ class Media extends React.Component {
     this.handleShowDeleteImage = this.handleShowDeleteImage.bind(this);
     this.handleCancelDeleteImage = this.handleCancelDeleteImage.bind(this);
 		this.handleActionDeleteImage = this.handleActionDeleteImage.bind(this);
+//		this.handleDeleteImages = this.handleDeleteImages.bind(this);
 
 		this.handleChange = this.handleChange.bind(this);
 		this.handleFolderSelect = this.handleFolderSelect.bind(this);
@@ -82,7 +85,9 @@ class Media extends React.Component {
 //    this.onFilesAdded = this.onFilesAdded.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
     this.onDragLeave = this.onDragLeave.bind(this);
-    this.onDrop = this.onDrop.bind(this);
+		this.onDrop = this.onDrop.bind(this);
+		
+		this.onSelectImage = this.onSelectImage.bind(this);
 
 		this.getFolders() ;
 	}
@@ -275,15 +280,41 @@ class Media extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 			xhr.onload = function () {
 				if (xhr.readyState === 4 && xhr.status === 200) {
-					var signedURL = JSON.parse( xhr.response ).signedURL ;
-					this.sendRequest(signedURL, file).then( function( value )
-						{ resolve(xhr.response); }
-					) ;
+					var result = JSON.parse( xhr.response ) ;
+					var signedURL = result.signedURL ;
+					image   = result.image ;
+					this.sendRequest(signedURL, file).then( function( value ) { 
+						this.updateImage( image ).then( function( value ){
+						resolve(xhr.response); 
+					}) ;
+				}.bind(this)) ;
 				} else {
 					alert( "Error creating new image") ;
 					reject(xhr.response);
 				}
 			}.bind(this);
+			xhr.send(json);
+		});
+	}
+
+	updateImage( image ) {
+    return new Promise((resolve, reject) => {
+			
+			var xhr = new XMLHttpRequest();
+			var json = JSON.stringify( image ) ;
+
+			xhr.open("PUT", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/'+image.imageId, true);
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
+
+			xhr.onload = function () {
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					resolve( xhr.response ) ;		
+				} else {
+					reject( xhr.response ) ;
+				}
+			} 
+
 			xhr.send(json);
 		});
 	}
@@ -296,7 +327,9 @@ class Media extends React.Component {
 		xhr.onload = function () {
 			var images = JSON.parse(xhr.responseText);
 			if (xhr.readyState === 4 && xhr.status === 200) {
-				this.setState( { images: images, refreshImages: false } ) ;
+				this.setState( { images: images, refreshImages: false, selectedImages: 0, isLoading: true } ) ;
+				this.forceUpdate() ;
+//				console.log( JSON.stringify(images ) ) ;
 			} else {
 				alert( "Error getting images") ;
 			}
@@ -305,16 +338,16 @@ class Media extends React.Component {
 	}
 
 	// call delete image which will also delete the image from the S3 bucket.
-	deleteImage() {
+	deleteImage( image ) {
 		var xhr = new XMLHttpRequest();
-		xhr.open("DELETE", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+this.state.selectedFolderId.slice(1)+'/images/'+this.state.deleteImageId, true);
+		xhr.open("DELETE", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+image.folderId+'/images/'+image.imageId, true);
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
 		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
 		xhr.onload = function () {
 			if (xhr.readyState === 4 && xhr.status === 200) {
 			  this.setState( { deleteImageId: '', refreshImages: true } );
 			} else {
-				alert( "Error deleting folder") ;
+				alert( "Error deleting image") ;
 			}
 		}.bind(this);
 		xhr.send();
@@ -429,10 +462,57 @@ class Media extends React.Component {
   }
 
 	handleActionDeleteImage() {
-		this.deleteImage( this.state.deleteImageId ) ;
 
+		this.state.images.map( image => {
+			if ( image.selected === true )
+			{
+				console.log( "deleting " + image.imageId ) ;
+				this.deleteImage( image ) ;
+			}
+			return image ;
+		}) ;
+	
 		this.setState({ showDeleteImage: false });
-  }
+	}
+
+	onSelectImage = event => {
+		var selectedImages = this.state.selectedImages ;
+
+		var image = this.state.images.find( function( image ) {
+			return image.imageId === event.target.id ;
+		}) ;
+
+		image.selected = !image.selected ;
+
+		if ( image.selected ) {
+			selectedImages++ ;
+		} else {
+			selectedImages-- ;
+		}
+		
+		this.setState( { selectedImages: selectedImages } ) ;
+	}
+	
+	/*
+	onSelectAllCardsClick() {
+    cards.SelectCards();
+	}
+
+  onSelectAllCardsOnPageClick() {
+    cards.SelectAllCardsOnPage();
+	}
+
+	onClearSelectionClick() {
+    cards.UnselectCards();
+	}
+
+	onUpdateSelection(s, e) {
+    btnSelectAllCards.SetEnabled(s.GetSelectedCardCount() < s.cpVisibleRowCount);
+    btnClearSelection.SetEnabled(s.GetSelectedCardCount() > 0);
+    btnSelectAllCardsOnPage.SetEnabled(s.GetSelectedKeysOnPage().length < s.GetVisibleCardsOnPage());
+    $("#info4").html("Total cards selected: " + s.GetSelectedCardCount());
+	}
+	*/
 
 	/*
 	renderProgress(file) {
@@ -456,6 +536,14 @@ class Media extends React.Component {
 	}
 	*/
 	
+	async componentDidMount() {
+		try {		
+			this.setState({ isLoading: false });
+		} catch ( e ) {
+			console.log( e ) ;
+		}
+	}
+
   renderProgress(file) {
 		const uploadProgress = this.state.uploadProgress[file.name];
 		return (
@@ -508,6 +596,7 @@ class Media extends React.Component {
 		}
 
 		return (
+//			!this.state.isLoading &&
       <div>
 			<Container fluid>
 					<h3>Media Library</h3>
@@ -534,8 +623,9 @@ class Media extends React.Component {
     				<Col sm={9}>
 						<h4>{this.state.selectedFolderName}</h4>
 						<ButtonToolbar className="mb-2" >
-							<Button className="mr-2" size="sm" disabled={this.state.uploading}>Add</Button>
-							<Button className="mr-2" size="sm" disabled={this.state.files.length === 0||this.state.uploading} onClick={this.uploadFiles}>Upload</Button>
+							<Button variant="primary" className="mr-2" size="sm" disabled={this.state.uploading}>Add</Button>
+							<Button variant="danger" className="mr-2" size="sm" disabled={this.state.selectedImages === 0} onClick={this.handleShowDeleteImage}>Delete</Button>
+							<Button variant="secondary" className="mr-2" size="sm" disabled={this.state.files.length === 0||this.state.uploading} onClick={this.uploadFiles}>Upload</Button>
 						</ButtonToolbar>
 						<div
 						  className={`Dropzone ${this.state.hightlight ? "Highlight" : ""}`}
@@ -549,8 +639,8 @@ class Media extends React.Component {
 						<CardColumns>
 	            {this.state.files.map( file => {
               return (
-								<Card key={file.id}>
-									<Card.Img src={URL.createObjectURL(file)} alt="Card Image"/>
+								<Card id={file.id} key={file.id} className={"px-1 py-1 mb-3"} draggable>
+									<Card.Img id={file.id} src={URL.createObjectURL(file)} alt="Card Image"/>
 									<Card.ImgOverlay>
 										{this.renderProgress(file)}
 									</Card.ImgOverlay>
@@ -558,9 +648,11 @@ class Media extends React.Component {
               );
 						})}
             {this.state.images.map( image => {
-             return (
-								<Card key={image.imageId} draggable>
-									<Card.Img src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId} alt="Card Image"/>
+							var border = "" ;
+							if ( image.selected ) { border = "primary" } 
+             	return (
+								<Card id={image.imageId} key={image.imageId} className={"px-1 py-1 mb-3"} bg={border} draggable>
+									<Card.Img id={image.imageId} onClick={this.onSelectImage} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId+"-300"}/>
 								</Card>
              );
 						})}
@@ -570,6 +662,11 @@ class Media extends React.Component {
  					</Row>
 				</Tab.Container>
 			</Container>
+
+
+
+
+
 			        
 			<Modal show={this.state.showAddFolder} onHide={this.handleCancelAddFolder}>
 				<Modal.Header closeButton>

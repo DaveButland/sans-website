@@ -133,9 +133,9 @@ class App extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-							<NavDropdown title="Portfolio" id="portfolio">
+							<NavDropdown title="My Portfolio" id="portfolio">
 				        <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
-        				<NavDropdown.Item href="/articles">Articles</NavDropdown.Item>
+        				<NavDropdown.Item href="/articles">Pages</NavDropdown.Item>
         				<NavDropdown.Item href="/media">Media</NavDropdown.Item>
        				 	<NavDropdown.Item href="/albums">Albums</NavDropdown.Item>
 				      </NavDropdown>
