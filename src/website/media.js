@@ -116,12 +116,36 @@ class Media extends React.Component {
 		
 		if (this.state.uploading) return;
 
-    const files = event.dataTransfer.files;
-		const array = this.fileListToArray(files);
+		const files = event.dataTransfer.files;
+	
+		var array = this.fileListToArray(files);
+
+		/*
+		var enhancedArray = array.map( file => {
+			this.getImageDimensions( file, function( newFile ) {
+				return newFile ;
+			}) ;
+		}) ;
+		*/
+		
 		this.onFilesAdded( array ) ;
 //		this.uploadFilesNow( array ) ;
 
 		this.setState({ hightlight: false });
+	}
+
+	getImageDimensions( file, callback ) 
+	{
+		var img = new Image() ;
+
+		img.onload = function() {
+			file.height = img.height ;
+			file.width  = img.width ;
+
+			callback( file ) ;
+		}
+
+		img.src = URL.createObjectURL( file ) ;
 	}
 
   fileListToArray(list) {
@@ -259,6 +283,7 @@ class Media extends React.Component {
 			await Promise.all(promises);
 
 			//remove files and refresh images
+			this.getImages() ;
 			
       this.setState({ successfullUploaded: true, uploading: false, refreshImages: true, files: [] });
     } catch (e) {
@@ -284,10 +309,10 @@ class Media extends React.Component {
 					var signedURL = result.signedURL ;
 					image   = result.image ;
 					this.sendRequest(signedURL, file).then( function( value ) { 
-						this.updateImage( image ).then( function( value ){
-						resolve(xhr.response); 
+	//					this.updateImage( image ).then( function( value ){
+							resolve(xhr.response); 
 					}) ;
-				}.bind(this)) ;
+//				}.bind(this)) ;
 				} else {
 					alert( "Error creating new image") ;
 					reject(xhr.response);
@@ -328,8 +353,6 @@ class Media extends React.Component {
 			var images = JSON.parse(xhr.responseText);
 			if (xhr.readyState === 4 && xhr.status === 200) {
 				this.setState( { images: images, refreshImages: false, selectedImages: 0, isLoading: true } ) ;
-				this.forceUpdate() ;
-//				console.log( JSON.stringify(images ) ) ;
 			} else {
 				alert( "Error getting images") ;
 			}
@@ -605,7 +628,7 @@ class Media extends React.Component {
 						onSelect={key => this.handleFolderSelect( key )}
 					>
   				<Row>
-    				<Col sm={3}>
+    				<Col sm={2}>
 							<h4>Folders</h4>
 							<ButtonToolbar className="mb-2">
 								<Button className="mr-2" name="Add" onClick={this.handleShowAddFolder} size="sm">Add</Button>
@@ -638,24 +661,27 @@ class Media extends React.Component {
 						>					
 						<CardColumns>
 	            {this.state.files.map( file => {
-              return (
-								<Card id={file.id} key={file.id} className={"px-1 py-1 mb-3"} draggable>
-									<Card.Img id={file.id} src={URL.createObjectURL(file)} alt="Card Image"/>
-									<Card.ImgOverlay>
-										{this.renderProgress(file)}
-									</Card.ImgOverlay>
-								</Card>
-              );
-						})}
-            {this.state.images.map( image => {
-							var border = "" ;
-							if ( image.selected ) { border = "primary" } 
-             	return (
-								<Card id={image.imageId} key={image.imageId} className={"px-1 py-1 mb-3"} bg={border} draggable>
-									<Card.Img id={image.imageId} onClick={this.onSelectImage} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId+"-300"}/>
-								</Card>
-             );
-						})}
+              	return (
+									<Card id={file.id} key={file.id} className={"px-1 py-1 mb-3"} >
+										<Card.Img id={file.id} src={URL.createObjectURL(file)} alt="Card Image"/>
+										<Card.ImgOverlay>
+											{this.renderProgress(file)}
+										</Card.ImgOverlay>
+									</Card>
+              	);
+							})}
+            	{this.state.images.map( image => {
+								var border = "" ;
+								if ( image.selected ) { border = "primary" } 
+             		return (
+									<Card id={image.imageId} key={image.imageId} className={"px-1 py-1 mb-3"} bg={border} 
+										draggable
+//								className="draggable"
+									>
+										<Card.Img id={image.imageId} onClick={this.onSelectImage} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+'-300'}/>
+									</Card>
+             		);
+							})}
 						</CardColumns>
 						</div>	
     				</Col>

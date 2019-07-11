@@ -22,7 +22,7 @@ class Drag extends React.Component {
        let id = ev.dataTransfer.getData("id");
        
        let tasks = this.state.tasks.filter((task) => {
-           if (task.name == id) {
+           if (task.name === id) {
                task.category = cat;
            }
            return task;
@@ -43,12 +43,16 @@ class Drag extends React.Component {
         this.state.tasks.forEach ((t) => {
             tasks[t.category].push(
                 <div key={t.name} 
-                    onDragStart = {(e) => this.onDragStart(e, t.name)}
-                    draggable
-                    className="draggable"
                     style = {{backgroundColor: t.bgcolor}}
                 >
-									<img src="/private/62040a6c-5bb7-47a0-bd2e-5637bfba1e96/1b9d4738-d229-4f6c-ba45-27750e233e91.jpeg" alt="test"/>
+									<div key={t.name+'1'} width="200"
+																		                    onDragStart = {(e) => this.onDragStart(e, t.name+'1')}
+																												draggable
+																												className="draggable"
+									>
+									<img key={t.name+'image'} src="/private/62040a6c-5bb7-47a0-bd2e-5637bfba1e96/1b9d4738-d229-4f6c-ba45-27750e233e91.jpeg" width="200" alt="test" draggable
+									/>
+									</div>
                     {t.name}
                 </div>
             );

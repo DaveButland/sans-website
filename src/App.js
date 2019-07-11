@@ -17,7 +17,6 @@ import Profile from "./website/profile" ;
 import Albums from "./website/albums" ;
 import Articles from "./website/articles" ;
 import NotFound from "./website/notfound" ;
-import Test from "./website/Test" ;
 import Drag from "./website/drag" ;
 
 import { Route, Switch } from "react-router-dom";
@@ -140,7 +139,6 @@ class App extends React.Component {
        				 	<NavDropdown.Item href="/albums">Albums</NavDropdown.Item>
 				      </NavDropdown>
 							<NavDropdown title="Tests" id="test">
-								<NavDropdown.Item href="/drag">Drag</NavDropdown.Item>
 							</NavDropdown>
             </Nav>
             <Form inline>
@@ -162,7 +160,6 @@ class App extends React.Component {
 					<AppliedRoute path="/albums" component={Albums} props={childProps}/>
 					<Route path="/image" component={Image} />
 					<Route path="/drag" component={Drag} />
-					<Route path="/test" component={Test} />
 					<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
 					<AppliedRoute path="/signup" component={SignUp}  props={childProps}/>
 					<Route component={NotFound} />
