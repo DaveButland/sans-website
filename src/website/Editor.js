@@ -5,8 +5,8 @@ import Button from 'react-bootstrap/Button' ;
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 //import htmlToDraft from 'html-to-draftjs';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 class MyEditor extends Component {
 
@@ -56,7 +56,7 @@ class MyEditor extends Component {
          		 	editorState={editorState}
           		wrapperClassName="demo-wrapper"
           		editorClassName="demo-editor"
-          		onEditorStateChange={this.onEditorStateChange}
+							onEditorStateChange={this.onEditorStateChange}
        		 	/>
         		<textarea
 							cols="100"

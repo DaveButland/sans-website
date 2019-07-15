@@ -65,17 +65,17 @@ class Albums extends React.Component {
 	}
 
   render() {
-		const { isLoading, disabled } = this.state;
+		const { disabled } = this.state;
 
-    if (isLoading) {
-			return( <div></div> ) ;
-		}
-		else
-		{
+//    if (isLoading) {
+//			return( <div></div> ) ;
+//		}
+//		else
+//		{
 			return( 
 				<Container fluid>
   				<Row>
-    				<Col sm={2}>
+    				<Col sm={3}>
 							<h4>Albums</h4>
 							<ButtonToolbar className="mb-2">
 								<Button className="mr-2" name="Add" onClick={this.handleShowAddFolder} size="sm">Add</Button>
@@ -96,7 +96,7 @@ class Albums extends React.Component {
 					</Row>
 				</Container>
 			) ;
-		}
+//		}
 	}
 }
 

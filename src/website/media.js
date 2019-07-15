@@ -628,7 +628,7 @@ class Media extends React.Component {
 						onSelect={key => this.handleFolderSelect( key )}
 					>
   				<Row>
-    				<Col sm={2}>
+    				<Col sm={3}>
 							<h4>Folders</h4>
 							<ButtonToolbar className="mb-2">
 								<Button className="mr-2" name="Add" onClick={this.handleShowAddFolder} size="sm">Add</Button>
