@@ -24,9 +24,9 @@ const awsconfig = {
         // Note: if the secure flag is set to true, then the cookie transmission requires a secure protocol
         cookieStorage: {
 				// REQUIRED - Cookie domain (only required if cookieStorage is provided)
-//					domain: 'quyen-le-model.com',
+					domain: 'quyen-le-model.com',
 //            domain: 'd3ml0ura1sl5yw.cloudfront.net' ,
-					domain: 'localhost',
+//					domain: 'localhost',
 //            domain: domain,
         // OPTIONAL - Cookie path
             path: '/',
