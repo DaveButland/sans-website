@@ -1,20 +1,19 @@
-import React from "react"; //basic react
+import React, {Fragment} from "react"; //basic react
 import { withRouter, Route, Switch } from "react-router-dom" ; //react routing
 import ReactGA from "react-ga" ; //google analytics
-import { Container, Navbar, Nav, NavDropdown, Form, Button } from "react-bootstrap" ; //react-bootstrap
-import { LinkContainer } from "react-router-bootstrap";
-
 import AppliedRoute from "./AppliedRoute" ; //Don't need this really?
 
+import Header from './website/header' ;
 import SignIn from "./website/signin" ;
 import SignUp from "./website/signup" ;
-import Home from "./website/home" ;
 import Media from "./website/media" ;
 import Profile from "./website/profile" ;
 import Albums from "./website/albums" ;
 import Pages from "./website/pages" ;
-import NotFound from "./website/notfound" ;
 import Drag from "./website/drag" ;
+import Folders from "./website/folders" ;
+import FrontPage from "./website/frontpage" ;
+import NotFound from "./website/notfound" ;
 
 import Security from "./website/Security" ;
 
@@ -28,7 +27,8 @@ class App extends React.Component {
 		
 		this.state = {
 			isAuthenticated: false,
-			isAuthenticating: true
+			isAuthenticating: true,
+			security: new Security()
 		};
 	}
 
@@ -37,8 +37,6 @@ class App extends React.Component {
 		var security = new Security() ;
 		var session = await security.getSession() ;
 
-//		var session = await Security.getSession() ;
-			
 		if ( session ) {
 			this.setState( { security: security, session: session, accessToken: session.getAccessToken().getJwtToken(), idToken: session.getIdToken().getJwtToken() } ) ;
 			this.userHasAuthenticated( true ) ;
@@ -46,29 +44,6 @@ class App extends React.Component {
 
 		this.setState( { isAuthenticating: false } ) ;
 	}
-
-	/*
-	async componentDidMount() {
-		try {
-			let session = await Auth.currentSession();
-			let accessToken = session.getAccessToken().getJwtToken() ;
-			let idToken = session.getIdToken().getJwtToken() ;
-			this.setState({ accessToken: accessToken, idToken: idToken });
-
-			await this.getCookies1(accessToken) ;
-			this.userHasAuthenticated(true);
-		}
-		catch(e) {
-			this.setState({accessToken: null, idToken: null });
-			this.removeCookies() ;
-			if (e !== 'No current user') {
-				alert( 'Get Session ' + e );
-			}
-		}
-	
-		this.setState({ isAuthenticating: false });
-	}
-	*/
 
 	userHasAuthenticated = authenticated => {
 		this.setState({ isAuthenticated: authenticated });
@@ -78,7 +53,7 @@ class App extends React.Component {
 		this.userHasAuthenticated(false);
 
 		await this.state.security.signOut();
-		this.props.history.push( "/signin" ) ;
+		this.props.history.push( "/" ) ;
 	}
 
  	render() {
@@ -91,62 +66,54 @@ class App extends React.Component {
 			security: this.state.security
 		};
 
+		const hide = !this.state.isAuthenticated ;
+
+		var navStyle = "test-style" ;
+		if( this.state.isAuthenticated )
+		{
+			navStyle = "test-style-nav" ;
+		} 
+
 //		console.log( "App: "+this.state.isAuthenticated+" "+Date.now() ) ;
 		
 		return (
-			!this.state.isAuthenticating &&
-      <Container fluid>
-        <Navbar variant="light" bg="light" expand="lg" fixed="top">
-					<LinkContainer to="/">
-  	        <Navbar.Brand href="/">Sans Website</Navbar.Brand>
-					</LinkContainer>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto">
-							<NavDropdown title="My Portfolio" id="portfolio">
-								<LinkContainer to="/profile">
-				        	<NavDropdown.Item>Profile</NavDropdown.Item>
-								</LinkContainer>
-								<LinkContainer to="/pages">
-        					<NavDropdown.Item>Pages</NavDropdown.Item>
-								</LinkContainer>
-								<LinkContainer to="/media">
-        					<NavDropdown.Item>Media</NavDropdown.Item>
-								</LinkContainer>
-								<LinkContainer to="/albums">
-       				 		<NavDropdown.Item>Albums</NavDropdown.Item>
-								</LinkContainer>
-				      </NavDropdown>
-							<NavDropdown title="Tests" id="test">
-							</NavDropdown>
-            </Nav>
-            <Form inline>
-              <Form.Control type="text" placeholder="Search" className="mr-sm-2" />
-        	    <Button variant="outline-success" size="sm">Search</Button>
-            </Form>
-						{this.state.isAuthenticated
-           	 	? <Button variant="default" onClick={this.handleLogout}>Signout</Button>
-            	: <LinkContainer to="/signin"><Nav.Link>Signin</Nav.Link></LinkContainer>
-	         	 	}
-    	  	</Navbar.Collapse>
-        </Navbar>
-			
+			!( this.state.isAuthenticating ) &&
+			<div className={navStyle}>
+				{ this.state.isAuthenticated 
+        ? <Header security={this.state.security} hide={hide}/>
+				: <Fragment></Fragment>
+				}
 				<Switch>
-          <Route exact path="/" component={Home} />
-					<Route path="/profile" component={Profile} />
+          <AppliedRoute exact path="/" component={FrontPage} props={childProps}/>
+					<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
+					<AppliedRoute path="/profile" component={Profile} props={childProps}/>
 					<AppliedRoute path="/pages" component={Pages} props={childProps}/>
 					<AppliedRoute path="/media" component={Media} props={childProps}/>
 					<AppliedRoute path="/albums" component={Albums} props={childProps}/>
+					<AppliedRoute exact path="/folders" component={Folders} props={childProps}/>
+					<AppliedRoute path="/folders/:folderid" component={Folders} props={childProps}/>
+					<AppliedRoute path="/frontpage" component={FrontPage} props={childProps}/>
 					<Route path="/image" component={Image} />
 					<Route path="/drag" component={Drag} />
-					<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
 					<AppliedRoute path="/signup" component={SignUp}  props={childProps}/>
 					<Route component={NotFound} />
 				</Switch>
-			</Container>
- 
+			</div>
     );
   }
 }
 
 export default withRouter( App );
+
+/*
+					<AppliedRoute path="/profile" component={Profile} props={childProps}/>
+					<AppliedRoute path="/pages" component={Pages} props={childProps}/>
+					<AppliedRoute path="/media" component={Media} props={childProps}/>
+					<AppliedRoute path="/albums" component={Albums} props={childProps}/>
+					<AppliedRoute path="/folders" component={Folders} props={childProps}/>
+					<AppliedRoute path="/frontpage" component={FrontPage} props={childProps}/>
+					<Route path="/image" component={Image} />
+					<Route path="/drag" component={Drag} />
+					<AppliedRoute path="/signup" component={SignUp}  props={childProps}/>
+					<Route component={NotFound} />
+*/

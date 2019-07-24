@@ -28,40 +28,44 @@ class Albums extends React.Component {
   }
 
 	getAlbums() {
-		var xhr = new XMLHttpRequest();
+		this.props.security.getAccessToken().then( function( accessToken ) {
 
-		xhr.onload = function () {
-			var albums = JSON.parse(xhr.responseText);
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				this.setState( { albums: albums, isLoading: false } ) ;
-			} else {
-				console.log( "Error getting albums") ;
-			}
-		}.bind(this) ;
+			var xhr = new XMLHttpRequest();
 
-		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders', true);
-		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
-		xhr.send() ;
-	}
+			xhr.onload = function () {
+				var albums = JSON.parse(xhr.responseText);
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					this.setState( { albums: albums, isLoading: false } ) ;
+				} else {
+					console.log( "Error getting albums") ;
+				}
+			}.bind(this) ;
+
+			xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders', true);
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+			xhr.send() ;
+		}.bind(this)) ;
+	} ;
 
 	getImages = albumid => {
-	//	this.setState( { isLoading: true } ) ;
-		var xhr = new XMLHttpRequest();
+		this.props.security.getAccessToken().then( function( accessToken ) {
+			var xhr = new XMLHttpRequest();
 
-		xhr.onload = function () {
-			var images = JSON.parse(xhr.responseText);
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				this.setState( { selectedAlbumId: albumid, images: images, isLoading: false } ) ;
-			} else {
-				console.log( "Error getting images") ;
-			}
-		}.bind(this) ;
+			xhr.onload = function () {
+				var images = JSON.parse(xhr.responseText);
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					this.setState( { selectedAlbumId: albumid, images: images, isLoading: false } ) ;
+				} else {
+					console.log( "Error getting images") ;
+				}
+			}.bind(this) ;
 
-		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+albumid+'/images', true);
-		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
-		xhr.send() ;
+			xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+albumid+'/images', true);
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
+			xhr.send() ;
+		}.bind(this)) ;
 	}
 
   render() {

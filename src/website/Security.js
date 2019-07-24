@@ -30,6 +30,7 @@ export default class Security {
 				cookie.save( "CloudFront-Key-Pair-Id", values["CloudFront-Key-Pair-Id"] ) ;
 				cookie.save( "CloudFront-Policy", values["CloudFront-Policy"] ) ;
 				cookie.save( "CloudFront-Signature", values["CloudFront-Signature"] ) ;
+
 				resolve(xhr.response);
 			} else {
 				alert( "Error getting cookies") ;
@@ -45,12 +46,13 @@ export default class Security {
 		{
 			if ( !this.session ) { this.getSession() }
 
+			// This is probably unnecessary, looks like getSession implements this logic
 			if ( this.session.getAccessToken().getExpiration() - ( Date.now() / 1000 ) < 300 )
 			{
 				this.getSession() ;
 			}
 
-			console.log( this.session.getAccessToken().getExpiration() - ( Date.now() / 1000 ) ) ;
+//			console.log( this.session.getAccessToken().getExpiration() - ( Date.now() / 1000 ) ) ;
 
 			return this.session.getAccessToken() ;
 		} catch( error ) {

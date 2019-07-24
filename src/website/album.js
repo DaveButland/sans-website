@@ -7,7 +7,7 @@ class Album extends React.Component {
     super(props, context);
 
 		this.state = {
-			selectedAlbumId: "62040a6c-5bb7-47a0-bd2e-5637bfba1e96",
+			selectedAlbumId: '',
 			albums: [],
 			images: [],
 			disabled: false

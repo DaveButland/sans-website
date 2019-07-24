@@ -31,3 +31,19 @@
     transform: rotate(360deg);
   }
 }
+
+/*
+.padding {
+	margin-top: 56px ;
+	height: 3000px ;
+	background-color: #000 ;
+}
+
+.navbar {
+	transition: top 0.5s ease;
+}
+
+.navbar-hide {
+	top: -56px ;
+}
+*/

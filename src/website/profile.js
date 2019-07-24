@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col, Form, FormControl, InputGroup, Image } from "react-bootstrap";
+import { Container, Row, Col, Form, FormControl, Image, Button } from "react-bootstrap";
 
 class Profile extends React.Component {
 
@@ -7,11 +7,15 @@ class Profile extends React.Component {
     super(props, context);
 
 		this.state = {
-			user: {},
+			user: { sub: ''
+						, username: ''
+						, email:''
+						, firstname: ''
+						, surname: '' }
 		}
 	}
 
-	getUser() {
+	getUser= () => {
 		this.props.security.getAccessToken().then( function( accessToken ) {
 			var xhr = new XMLHttpRequest();
 
@@ -35,25 +39,71 @@ class Profile extends React.Component {
 		});
 	}
 
-	render() {
+	onChange = ( event ) => {
+		var user = this.state.user ;
+
+		if ( user[event.target.id] !== event.target.value )
+		{
+			user[event.target.id] = event.target.value ;
+			this.setState({ user: user, changed: true } ) ;
+		}
+	}
+
+	componentDidMount = async () => {
+		var accessToken = await this.props.security.getAccessToken() ;
+
+		var user = this.state.user ;
+
+		user.sub = accessToken.payload.sub ;
+		user.username = accessToken.payload.username ;
+
+		this.setState( { user:  user }) ;
+	}
+
+	render= () => {
     return (
       <Container fluid>
-				<Row>
+				<Row >
 					<Col lg={3}>
-						<Image src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/e1dc9d32-24d6-40c2-a3ca-12310d3325e4/29b1efb8-a449-43c6-aa00-6905b72cc1d1-300"}></Image>
+						<Image src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/2acf50fa-0738-4e88-bd3b-06db07449152/853e36f9-123e-4921-b44d-3e89c3fa95be-300"}></Image>
 					</Col>
-					<Col lg={9}>
+					<Col lg={6}>
 						<Form>
-							<InputGroup className="mb-3">
-				    		<InputGroup.Prepend>
-      						<InputGroup.Text id="basic-addon1">@</InputGroup.Text>
-    						</InputGroup.Prepend>
-    						<FormControl
-    		  				placeholder="Username"
- 		    	 				aria-label="Username"
-      						aria-describedby="basic-addon1"
-    						/>
-  						</InputGroup>
+
+							<Form.Row>
+								<Form.Group as={Col} controlId="username">
+									<Form.Label>Username</Form.Label>
+	 								<FormControl type="text" value={this.state.user.username} onChange={this.onChange} placeholder="Username" aria-label="Username" aria-describedby="username" />
+									<Form.Text className="text-muted">This is your unique identifier across the site.</Form.Text>
+								</Form.Group>
+								<Form.Group as={Col}>
+									<Form.Label>Password</Form.Label>
+	 								<FormControl type="password" placeholder="Password" aria-label="password" aria-describedby="password" />
+									<Form.Text className="text-muted">Never share your password with anyone else.</Form.Text>
+								</Form.Group>
+							</Form.Row>
+
+							<Form.Row>
+								<Form.Group as={Col} controlId="email">
+									<Form.Label>Email Address</Form.Label>
+	 								<FormControl type="email" value={this.state.user.email} onChange={this.onChange} placeholder="Email" aria-label="Email" aria-describedby="email" />
+									<Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text>
+								</Form.Group>
+							</Form.Row>
+
+							<Form.Row border="primary">
+								<Form.Group as={Col}>
+									<Form.Label>First Name</Form.Label>
+  								<FormControl placeholder="First Name" aria-label="Firstname" aria-describedby="firstname" />
+									<Form.Text className="text-muted">This is for billing purposes only</Form.Text>
+								</Form.Group>
+								<Form.Group as={Col}>
+									<Form.Label>Last Name</Form.Label>
+   								<FormControl placeholder="Last Name" aria-label="Lastname" aria-describedby="lastname" />
+									<Form.Text className="text-muted">This is for billing purposes only</Form.Text>
+								</Form.Group>
+							</Form.Row>
+							<Button>Update</Button>
 						</Form>
 					</Col>
 				</Row>

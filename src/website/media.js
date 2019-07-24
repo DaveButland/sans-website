@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Row, Col, ButtonToolbar, Button, ListGroup, Tab, Modal, InputGroup, FormControl, Card, CardColumns, ProgressBar }  from "react-bootstrap";
 import CircularProgressBar from "../CircularProgressBar/CircularProgressBar" ;
 import "./media.css";
+import EXIF from "exif-js" ;
 
 function compareFolders(a, b) {
   // Use toUpperCase() to ignore character casing
@@ -134,7 +135,36 @@ class Media extends React.Component {
 		this.setState({ hightlight: false });
 	}
 
-	getImageDimensions( file, callback ) 
+	getExif( files ) {
+		files.map( file => {
+ 
+	
+    	var fr = new FileReader() ; // to read file contents
+
+			fr.onload = function(ev) {
+						var exif = EXIF.readFromBinaryFile( ev.target.result ) ;
+						console.log( exif ) ;
+	//				var exif = EXIF.readFromBinaryFile(new BinaryFile(this.result));
+						file.exif = exif ;
+						return file ;
+			};
+
+			fr.readAsArrayBuffer(file);
+
+			return file ;
+//    	fr.readAsBinaryString(file); // read the file
+		});
+	}
+
+	getFileData( files ) 
+	{
+		files.map( file => {
+			this.getFileDimensions( file ) ;
+			return file ;
+		});
+	}
+
+	getFileDimensions( file, callback ) 
 	{
 		var img = new Image() ;
 
@@ -142,10 +172,33 @@ class Media extends React.Component {
 			file.height = img.height ;
 			file.width  = img.width ;
 
-			callback( file ) ;
+			console.log( file ) ;
+//			callback( file ) ;
 		}
 
 		img.src = URL.createObjectURL( file ) ;
+	}
+
+	getImageData( images )
+	{
+		images.map( image => {
+			this.getImageDimensions( image ) ;
+			return image ;
+		}) ;
+	}
+
+	getImageDimensions( image ) 
+	{
+		var img = new Image() ;
+
+		img.onload = function() {
+			image.height = img.height ;
+			image.width  = img.width ;
+
+			console.log( image ) ;
+		}
+
+		img.src = 'https://'+process.env.REACT_APP_HTML_DOMAIN+'/thumbnail/'+image.folderId+'/'+image.imageId+'-300' ;
 	}
 
   fileListToArray(list) {
@@ -171,6 +224,8 @@ class Media extends React.Component {
     this.setState(prevState => ({
       files: prevState.files.concat(files)
 		}));
+		this.getFileData( files );
+		this.getExif( files ) ;
 	}
 
 	addFolder( name ) {
@@ -295,7 +350,7 @@ class Media extends React.Component {
 	addImage = file => {
 		return new Promise((resolve, reject) => {
 
-			var image = { folderId: this.state.selectedFolderId.slice(1), name: file.name, type: file.type, size: file.size } ;
+			var image = { folderId: this.state.selectedFolderId.slice(1), name: file.name, type: file.type, size: file.size, height: file.height, width: file.width } ;
 
 			var json = JSON.stringify(image);
 
@@ -346,17 +401,21 @@ class Media extends React.Component {
 
 	getImages() {
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+this.state.selectedFolderId.slice(1)+'/images', true);
-		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
+
 		xhr.onload = function () {
 			var images = JSON.parse(xhr.responseText);
 			if (xhr.readyState === 4 && xhr.status === 200) {
+				this.getImageData( images ) ;
 				this.setState( { images: images, refreshImages: false, selectedImages: 0, isLoading: true } ) ;
 			} else {
 				alert( "Error getting images") ;
 			}
 		}.bind(this);
+
+		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+this.state.selectedFolderId.slice(1)+'/images', true);
+		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+		xhr.setRequestHeader('Authorization', 'Bearer '+this.props.accessToken );
+
 		xhr.send();
 	}
 
@@ -431,6 +490,7 @@ class Media extends React.Component {
 		}) ;
 
 		this.setState({ selectedFolderId: key, selectedFolderName: folder.folderName, selectedFolder: folder, refreshImages: true } ) ;
+		this.getImages() ;
 	}
 
   handleShowAddFolder() {
@@ -606,10 +666,6 @@ class Media extends React.Component {
 
   render() {
 
-		if ( ( this.state.refreshImages ) && ( this.state.selectedFolder ) ) {
-			this.getImages() ;
-		}
-
 //		const folders = this.state.folders ;
 //		const images = this.state.images ;
 
@@ -660,9 +716,9 @@ class Media extends React.Component {
 							disabled={this.state.uploading}
 						>					
 						<CardColumns>
-	            {this.state.files.map( file => {
+	            {this.state.files.map( (file, index) => {
               	return (
-									<Card id={file.id} key={file.id} className={"px-1 py-1 mb-3"} >
+									<Card id={index} key={index} className={"px-1 py-1 mb-3"} >
 										<Card.Img id={file.id} src={URL.createObjectURL(file)} alt="Card Image"/>
 										<Card.ImgOverlay>
 											{this.renderProgress(file)}
@@ -670,10 +726,11 @@ class Media extends React.Component {
 									</Card>
               	);
 							})}
-            	{this.state.images.map( image => {
+            	{this.state.images.map( (image, index) => {
 								var border = "" ;
 								if ( image.selected ) { border = "primary" } 
-             		return (
+								console.log( image.name + ' ' + image.height + ' ' + image.width ) ;
+								return (
 									<Card id={image.imageId} key={image.imageId} className={"px-1 py-1 mb-3"} bg={border} 
 										draggable
 //								className="draggable"

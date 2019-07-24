@@ -319,7 +319,7 @@ class Pages extends React.Component {
   render() {
 
 		var page = this.state.selectedPage ;
-		var disabled = !(typeof page !== 'undefined') ;
+		var disabled = !(typeof page.pageId !== 'undefined') ;
 
 		return (
       <Fragment>
