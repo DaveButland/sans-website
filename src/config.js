@@ -24,8 +24,8 @@ const awsconfig = {
         // Note: if the secure flag is set to true, then the cookie transmission requires a secure protocol
         cookieStorage: {
 				// REQUIRED - Cookie domain (only required if cookieStorage is provided)
-//					domain: 'quyen-le-model.com',
-					domain: 'localhost',
+					domain: 'quyen-le-model.com',
+//					domain: 'localhost',
         // OPTIONAL - Cookie path
             path: '/',
         // OPTIONAL - Cookie expiration in days
