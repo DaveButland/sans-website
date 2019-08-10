@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom" ;
 import Auth from "@aws-amplify/auth" ;
+import "./signin.css" ;
 
 class SignIn extends Component {
   constructor(props) {
@@ -109,8 +110,8 @@ class SignIn extends Component {
 	render() {
     return (
       <Container>
-				<h1>Sign In</h1>
-        <Form onSubmit={this.handleSubmit}>
+        <Form className="signin" onSubmit={this.handleSubmit}>
+					<h1>Sign In</h1>
           <Form.Group controlId="username">
             <Form.Label>Username</Form.Label>
 						<Form.Control 
@@ -138,7 +139,7 @@ class SignIn extends Component {
 	      		Sign In
           </Button>
 					<Button block variant="secondary" onClick={this.handleActionForgot} disabled>Forgot Password</Button>
-					<Button block variant="secondary" onClick={this.handleActionSignup}>Sign Up</Button>
+					<Button block variant="secondary" onClick={this.handleActionSignup} >Sign Up</Button>
  				</Form>	
       </Container>
     );

@@ -203,12 +203,15 @@ class Folder extends React.Component {
 		return(
 			<Fragment>
 				<div className="measureRow"></div>
-				<ButtonToolbar className="mb-2" >
-					<h4 className="mr-2">{this.state.folder.folderName}</h4>
-					<Button variant="primary" className="mr-2" size="sm" disabled={this.state.uploading}>Add</Button>
-					<Button variant="danger" className="mr-2" size="sm" disabled={this.state.selectedImages === 0} onClick={this.handleShowDeleteImage}>Delete</Button>
-					<Button variant="secondary" className="mr-2" size="sm" disabled={this.state.files.length === 0||this.state.uploading} onClick={this.uploadFiles}>Upload</Button>
-				</ButtonToolbar>
+				{this.state.editable
+				? <ButtonToolbar className="mb-2" >
+						<h4 className="mr-2">{this.state.folder.folderName}</h4>
+						<Button variant="primary" className="mr-2" size="sm" disabled={this.state.uploading}>Add</Button>
+						<Button variant="danger" className="mr-2" size="sm" disabled={this.state.selectedImages === 0} onClick={this.handleShowDeleteImage}>Delete</Button>
+						<Button variant="secondary" className="mr-2" size="sm" disabled={this.state.files.length === 0||this.state.uploading} onClick={this.uploadFiles}>Upload</Button>
+					</ButtonToolbar>
+				: <h4 className="mr-2">{this.state.folder.folderName}</h4>
+				}
 				<div
 					className={`Dropzone ${this.state.hightlight ? "Highlight" : ""}`}
 					onDragOver={this.onDragOver}

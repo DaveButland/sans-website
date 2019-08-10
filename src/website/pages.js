@@ -66,7 +66,7 @@ class Pages extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 			xhr.send() ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error getting access token", error, error.stack() ) ;
+			console.log( "Error getting access token", error ) ;
 		});
 	}
 
@@ -93,7 +93,7 @@ class Pages extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 			xhr.send( json ) ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error getting access token", error, error.stack() ) ;
+			console.log( "Error getting access token", error ) ;
 		});
 	}
 
@@ -132,7 +132,7 @@ class Pages extends React.Component {
 		xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 		xhr.send(json) ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error saving page", error, error.stack() ) ;
+			console.log( "Error saving page", error ) ;
 			// not authenticated
 		});
 	}
@@ -157,7 +157,7 @@ class Pages extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 			xhr.send() ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error getting access token", error, error.stack() ) ;
+			console.log( "Error getting access token", error, error ) ;
 		});
 	}
 
@@ -343,7 +343,7 @@ class Pages extends React.Component {
 						<Col lg={9}>
 							{ disabled 
 							? <Fragment></Fragment>
-							:	<Page page={page} editable security={this.props.security}/>
+							:	<Page page={page}  security={this.props.security}/>
 							}
 						</Col>
 					</Row>

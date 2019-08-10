@@ -1,16 +1,17 @@
-import React, {Fragment} from "react"; //basic react
+import React from "react"; //basic react
 import { withRouter, Route, Switch } from "react-router-dom" ; //react routing
 import ReactGA from "react-ga" ; //google analytics
 import AppliedRoute from "./AppliedRoute" ; //Don't need this really?
 
 import Header from './website/header' ;
 import SignIn from "./website/signin" ;
-import SignUp from "./website/signup" ;
+//import SignUp from "./website/signup" ;
 import Media from "./website/media" ;
+import Images from "./website/images" ;
 import Profile from "./website/profile" ;
+import Content from "./website/content" ;
 import Albums from "./website/albums" ;
 import Pages from "./website/pages" ;
-import Drag from "./website/drag" ;
 import Folders from "./website/folders" ;
 import FrontPage from "./website/frontpage" ;
 import NotFound from "./website/notfound" ;
@@ -66,38 +67,36 @@ class App extends React.Component {
 			security: this.state.security
 		};
 
-		const hide = !this.state.isAuthenticated ;
-
-		var navStyle = "test-style" ;
-		if( this.state.isAuthenticated )
-		{
-			navStyle = "test-style-nav" ;
-		} 
-
 //		console.log( "App: "+this.state.isAuthenticated+" "+Date.now() ) ;
 		
 		return (
 			!( this.state.isAuthenticating ) &&
-			<div className={navStyle}>
-				{ this.state.isAuthenticated 
-        ? <Header security={this.state.security} hide={hide}/>
-				: <Fragment></Fragment>
+			<div>
+				{ !this.state.isAuthenticated 
+        ? <div className="test-style">
+						<Switch>
+          		<AppliedRoute exact path="/" component={FrontPage} props={childProps}/>
+							<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
+							<Route component={NotFound} />
+						</Switch>
+					</div>
+				: <div className="test-style-nav">
+				  	<Header security={this.state.security} />
+						<Switch>
+          		<AppliedRoute exact path="/" component={FrontPage} props={childProps}/>
+							<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
+							<AppliedRoute path="/profile" component={Profile} props={childProps}/>
+							<AppliedRoute path="/pages" component={Pages} props={childProps}/>
+							<AppliedRoute path="/media" component={Media} props={childProps}/>
+							<AppliedRoute path="/albums" component={Albums} props={childProps}/>
+							<AppliedRoute exact path="/folders" component={Folders} props={childProps}/>
+							<AppliedRoute path="/folders/:folderid" component={Folders} props={childProps}/>
+							<AppliedRoute path="/images/:imageid" component={Images} props={childProps} />
+							<AppliedRoute path="/content" component={Content} props={childProps} />
+ 							<Route component={NotFound} />
+						</Switch>
+					</div>
 				}
-				<Switch>
-          <AppliedRoute exact path="/" component={FrontPage} props={childProps}/>
-					<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
-					<AppliedRoute path="/profile" component={Profile} props={childProps}/>
-					<AppliedRoute path="/pages" component={Pages} props={childProps}/>
-					<AppliedRoute path="/media" component={Media} props={childProps}/>
-					<AppliedRoute path="/albums" component={Albums} props={childProps}/>
-					<AppliedRoute exact path="/folders" component={Folders} props={childProps}/>
-					<AppliedRoute path="/folders/:folderid" component={Folders} props={childProps}/>
-					<AppliedRoute path="/frontpage" component={FrontPage} props={childProps}/>
-					<Route path="/image" component={Image} />
-					<Route path="/drag" component={Drag} />
-					<AppliedRoute path="/signup" component={SignUp}  props={childProps}/>
-					<Route component={NotFound} />
-				</Switch>
 			</div>
     );
   }
@@ -106,14 +105,6 @@ class App extends React.Component {
 export default withRouter( App );
 
 /*
-					<AppliedRoute path="/profile" component={Profile} props={childProps}/>
-					<AppliedRoute path="/pages" component={Pages} props={childProps}/>
-					<AppliedRoute path="/media" component={Media} props={childProps}/>
-					<AppliedRoute path="/albums" component={Albums} props={childProps}/>
-					<AppliedRoute path="/folders" component={Folders} props={childProps}/>
-					<AppliedRoute path="/frontpage" component={FrontPage} props={childProps}/>
-					<Route path="/image" component={Image} />
-					<Route path="/drag" component={Drag} />
+Signup is disabled for now.
 					<AppliedRoute path="/signup" component={SignUp}  props={childProps}/>
-					<Route component={NotFound} />
 */

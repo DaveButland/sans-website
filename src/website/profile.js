@@ -35,7 +35,7 @@ class Profile extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer '+accessToken.getJwtToken() );
 			xhr.send() ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error getting access token", error, error.stack() ) ;
+			console.log( "Error getting access token", error, error ) ;
 		});
 	}
 
@@ -56,6 +56,8 @@ class Profile extends React.Component {
 
 		user.sub = accessToken.payload.sub ;
 		user.username = accessToken.payload.username ;
+
+		await this.props.security.getUser() ;
 
 		this.setState( { user:  user }) ;
 	}

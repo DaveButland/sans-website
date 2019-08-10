@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavDropdown, Form, Button } from 'react-bootstrap' ;
+import { Navbar, Nav, NavDropdown, Form, Button } from 'react-bootstrap';
 import { LinkContainer } from "react-router-bootstrap";
-import "./header.css" ;
+import "./header.css";
 
 class Header extends Component {
 
@@ -11,16 +11,18 @@ class Header extends Component {
 		this.handleLogout = this.handleLogout.bind(this) ;
 	}
 	
-	handleLogout = async (event) => {
-		await this.props.security.signOut();
-//		this.props.history.push( "/" ) ;
+	handleLogout = (event) => {
+		this.props.security.signOut();
+//		window.location.reload();
+		this.setState( { update: true } ) ;
+	//		this.props.history.push( "/" ) ;
 	}
 
 	render() {
 		return (
-			<Navbar variant="dark" bg="dark" expand="lg" fixed="top">
+			<Navbar className="py-0 py-md-0" variant="dark" bg="dark" expand="lg" fixed="top">
 				<LinkContainer to="/">
-  	      <Navbar.Brand href="/">Quyên Lê</Navbar.Brand>
+  	      <Navbar.Brand href="/">Quyen Le</Navbar.Brand>
 				</LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
@@ -42,14 +44,14 @@ class Header extends Component {
 								<NavDropdown.Item>Folders</NavDropdown.Item>
 							</LinkContainer>
 				     </NavDropdown>
-						<NavDropdown title="Tests" id="test">
-						</NavDropdown>
           </Nav>
           <Form inline>
-            <Form.Control type="text" placeholder="Search" className="mr-sm-2" />
+            <Form.Control size="sm" type="text" placeholder="Search" className="mr-sm-2" />
       	    <Button variant="outline-success" size="sm">Search</Button>
           </Form>
-          <Button variant="light" onClick={this.handleLogout}>Signout</Button>
+					<LinkContainer to="/" activeClassName="">
+	          <Button className="mx-2" variant="outline-danger" onClick={this.handleLogout} size="sm">Signout</Button>
+					</LinkContainer>
       	</Navbar.Collapse>
       </Navbar>
 		);

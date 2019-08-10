@@ -56,7 +56,7 @@ class Folders extends React.Component {
 			var xhr = new XMLHttpRequest();
 
 			xhr.onerrror = function( error ) {
-				console.log( "Error getting folders", error, error.stack() ) ;
+				console.log( "Error getting folders", error, error ) ;
 			}
 
 			xhr.onload = function () {
@@ -73,7 +73,7 @@ class Folders extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken.getJwtToken() );
 			xhr.send() ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error getting access token", error, error.stack() ) ;
+			console.log( "Error getting access token", error ) ;
 		});
 	}
 
@@ -85,7 +85,7 @@ class Folders extends React.Component {
 			var json = JSON.stringify( folder ) ;
 
 			xhr.onerror = function( error ) {
-				console.log( "Error getting folders", error, error.stack() ) ;
+				console.log( "Error getting folders", error ) ;
 			}
 
 			xhr.onload = function () {
@@ -104,7 +104,7 @@ class Folders extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken.getJwtToken() );
 			xhr.send( json ) ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error getting access token", error, error.stack() ) ;
+			console.log( "Error getting access token", error ) ;
 		});
 	}
 
@@ -134,7 +134,7 @@ class Folders extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken.getJwtToken() );
 			xhr.send(json) ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error saving folder", error, error.stack() ) ;
+			console.log( "Error saving folder", error ) ;
 		});
 	}
 
@@ -162,7 +162,7 @@ class Folders extends React.Component {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken.getJwtToken() );
 			xhr.send() ;
 		}.bind(this)).catch ( function (error ) {
-			console.log( "Error getting access token", error, error.stack() ) ;
+			console.log( "Error getting access token", error ) ;
 		});
 	}
 
@@ -321,6 +321,7 @@ class Folders extends React.Component {
 		return (
       <Fragment>
 				<Container fluid>
+					<h3>Media Library</h3>
   				<Row>
     				<Col lg={3}>
 							<ButtonToolbar className="mb-2">

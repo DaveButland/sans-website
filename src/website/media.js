@@ -80,25 +80,24 @@ class Media extends React.Component {
 		this.sendRequest = this.sendRequest.bind(this);
 		this.renderActions = this.renderActions.bind(this) ;
 
-//    this.fileInputRef = React.createRef();
-
-//    this.openFileDialog = this.openFileDialog.bind(this);
-//    this.onFilesAdded = this.onFilesAdded.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
     this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		
 		this.onSelectImage = this.onSelectImage.bind(this);
 
+		this.fileInputRef = React.createRef();
+
+		this.openFileDialog = this.openFileDialog.bind(this);
+		this.onFilesAddedButton = this.onFilesAddedButton.bind(this) ;
+
 		this.getFolders() ;
 	}
 	
-	/*
-  openFileDialog() {
+	openFileDialog() {
     if (this.props.disabled) return;
     this.fileInputRef.current.click();
-	}
-	*/
+  }
 
   onDragOver(evt) {
     evt.preventDefault();
@@ -143,7 +142,7 @@ class Media extends React.Component {
 
 			fr.onload = function(ev) {
 						var exif = EXIF.readFromBinaryFile( ev.target.result ) ;
-						console.log( exif ) ;
+//						console.log( exif ) ;
 	//				var exif = EXIF.readFromBinaryFile(new BinaryFile(this.result));
 						file.exif = exif ;
 						return file ;
@@ -172,7 +171,7 @@ class Media extends React.Component {
 			file.height = img.height ;
 			file.width  = img.width ;
 
-			console.log( file ) ;
+//			console.log( file ) ;
 //			callback( file ) ;
 		}
 
@@ -195,7 +194,7 @@ class Media extends React.Component {
 			image.height = img.height ;
 			image.width  = img.width ;
 
-			console.log( image ) ;
+//			console.log( image ) ;
 		}
 
 		img.src = 'https://'+process.env.REACT_APP_HTML_DOMAIN+'/thumbnail/'+image.folderId+'/'+image.imageId+'-300' ;
@@ -219,6 +218,13 @@ class Media extends React.Component {
     }
 	}
 	*/
+
+  onFilesAddedButton(evt) {
+    const files = evt.target.files;
+
+		const array = this.fileListToArray(files);
+    this.onFilesAdded(array);
+  }
 
   onFilesAdded(files) {
     this.setState(prevState => ({
@@ -702,7 +708,7 @@ class Media extends React.Component {
     				<Col sm={9}>
 						<h4>{this.state.selectedFolderName}</h4>
 						<ButtonToolbar className="mb-2" >
-							<Button variant="primary" className="mr-2" size="sm" disabled={this.state.uploading}>Add</Button>
+							<Button variant="primary" className="mr-2" size="sm" disabled={this.state.uploading} onClick={this.openFileDialog}>Add</Button>
 							<Button variant="danger" className="mr-2" size="sm" disabled={this.state.selectedImages === 0} onClick={this.handleShowDeleteImage}>Delete</Button>
 							<Button variant="secondary" className="mr-2" size="sm" disabled={this.state.files.length === 0||this.state.uploading} onClick={this.uploadFiles}>Upload</Button>
 						</ButtonToolbar>
@@ -714,7 +720,11 @@ class Media extends React.Component {
 							style={{ cursor: this.props.disabled ? "default" : "pointer" }}
 //							onFilesAdded={this.onFilesAdded}
 							disabled={this.state.uploading}
-						>					
+							>					
+  						<div className="custom-file">
+   							<input type="file" multiple className="custom-file-input" id="inputGroupFile01" ref={this.fileInputRef}
+      						aria-describedby="inputGroupFileAddon01" onChange={this.onFilesAddedButton} />
+  						</div>
 						<CardColumns>
 	            {this.state.files.map( (file, index) => {
               	return (
@@ -729,7 +739,7 @@ class Media extends React.Component {
             	{this.state.images.map( (image, index) => {
 								var border = "" ;
 								if ( image.selected ) { border = "primary" } 
-								console.log( image.name + ' ' + image.height + ' ' + image.width ) ;
+//								console.log( image.name + ' ' + image.height + ' ' + image.width ) ;
 								return (
 									<Card id={image.imageId} key={image.imageId} className={"px-1 py-1 mb-3"} bg={border} 
 										draggable

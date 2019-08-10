@@ -16,6 +16,10 @@
 	left:50%;
 }
 
+.carousel-nav {
+	height: calc(100vh - 40px) !important ;
+}
+
 .btn-parent {
 	position: absolute;
 	top: 0;
@@ -31,7 +35,8 @@
 	margin: -75px ;
 	z-index:10;
 	font-size:150%;
-  font-family: "Times New Roman", Times, serif;
+	font-family: "Times New Roman", Times, serif; 
+/*	font-family: 'Lora', serif; */
 	color:#ddd;
 	border-color:#fff;
 	position: absolute;
@@ -44,8 +49,8 @@
 .btn-wrap-text:hover .soon-text { display: inline; }
 
 .test-style-nav {
-	margin-top: 56px;
-	height: 100vh;
+	margin-top: 40px;
+	height: calc(100vh - 40px);
 	width: 100vw;
 }
 

@@ -146,11 +146,24 @@ class FrontPage extends React.Component {
 		const fade = true ;
 		const controls = false ;
 		const interval = 2000 ;
+		var screenSize = this.state.width ;
+		if ( this.state.height > this.state.width ) { screenSize = this.state.height } ;
+		screenSize = Math.floor( screenSize / 300 + 1 ) * 300 ;
+//		console.log( screenSize ) ;
+
+		const nav = this.props.security.loggedIn() ;
+
+		var carouselClass = "" ;
+		if ( nav )
+		{
+			carouselClass= "carousel-nav" ;
+		}
 //		const interval = null ;
 		return(
 			<Fragment>
 				<div className="measureRow">
 				<Carousel 
+					className={carouselClass}
 					indicators={indicators} 
 					fade={fade} 
 					controls={controls} 
@@ -160,25 +173,42 @@ class FrontPage extends React.Component {
 //					onSlideEnd={this.onSlideEnd}
 				>
 					{this.state.images.map( image => {
-						if ( image.width * this.state.height / this.state.width > image.height ) {
-							var imageWidth1 = Math.round(image.width * this.state.height / image.height ) ;
-							var imageOffset1 = Math.round(( imageWidth1 - this.state.width ) / 2 );
-							imgStyle = { height: '100vh', left: -imageOffset1 } ;
+						var imageWidth = image.width ;
+						var imageHeight = image.height ;
+
+						var imageCentreX = image.centreX || ( imageWidth / 2 ) ;
+						var imageCentreY = image.centreY || ( imageHeight / 2 ) ;
+
+						var imageWidthScaled   = Math.round( imageWidth * this.state.height / imageHeight ) ;
+						var imageHeightScaled   = Math.round( imageHeight * this.state.width / imageWidth ) ;
+						var imageCentreXScaled = Math.round( imageCentreX * this.state.height / imageHeight ) ;
+						var imageCentreYScaled = Math.round( imageCentreY * this.state.width / imageWidth ) ;
+
+ 						//If using maximum height then work out width offset otherwise work out height offset
+						if ( imageWidth * this.state.height / this.state.width > imageHeight ) {
+							var imageWidthOffset = Math.round( imageCentreXScaled -  ( this.state.width / 2 ) ) ;
+							if ( imageWidthOffset < 0 ) { imageWidthOffset = 0 } ; 
+							if ( imageWidthOffset > imageWidthScaled - this.state.width ) { imageWidthOffset = imageWidthScaled - this.state.width ; }  
+							imgStyle = { height: '100vh', left: -imageWidthOffset } ;
 						} else {
-							var imageHeight = Math.round(image.height * this.state.width / image.width) ;
-							var imageOffset = Math.round(( imageHeight - this.state.height ) / 2 ) ;
-							imgStyle = { width: '100vw', top: -imageOffset } ;
+							var imageHeightOffset = Math.round( imageCentreYScaled -  ( this.state.height / 2 ) ) ;
+							if ( imageHeightOffset < 0 ) { imageHeightOffset = 0 } ; 
+							if ( imageHeightOffset > imageHeightScaled - this.state.height ) { imageHeightOffset = imageHeightScaled - this.state.height ; }  
+							imgStyle = { width: '100vw', top: -imageHeightOffset } ;
 						} 
       	    return (
 							<Carousel.Item key={image.imageId} >
-								<img className="fullimage" id={image.imageId} style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId} alt={image.name} />
+								{ screenSize > 1800 
+								?	(	<img className="fullimage" id={image.imageId} style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId} alt={image.name} /> )
+								: (	<img className="fullimage" id={image.imageId} style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-"+screenSize} alt={image.name} /> )
+								}
 							</Carousel.Item>
-					)
+						)
 					})}
 				</Carousel>
 				<div className="btn-parent">
 					<Button variant="outline-light" className="btn-wrap-text" onClick={this.onClick}>
-						<span className="name-text">Quyên Lê Model</span>
+						<span className="name-text">Quyen Le Model</span>
 						<span className="soon-text">Coming Soon</span>
 					</Button>
 				</div>

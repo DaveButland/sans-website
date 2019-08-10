@@ -20,14 +20,13 @@ class Page extends React.Component {
 				showCharsCounter: false,
 				showWordsCounter: false,
 				showXPathInStatusbar: false,
-				height: 800				
+				height: 400				
 			}, 
 		  page: {}
 		}
 
 		if ( this.props.page ) { this.state.page = this.props.page } ;
 		if ( !this.state.page.title ) { this.state.page.title = '' } ;
-
 
 		if ( !this.state.editable )
 		{

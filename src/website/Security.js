@@ -8,7 +8,8 @@ import cookie from "react-cookies";
 Amplify.configure(awsconfig);
 
 export default class Security {
-  session = null ;
+	session = null ;
+	authenticated = false ;
 
 	removeCookies = async => {
 		cookie.remove( "CloudFront-Key-Pair-Id" ) ;
@@ -56,8 +57,12 @@ export default class Security {
 
 			return this.session.getAccessToken() ;
 		} catch( error ) {
-			console.log( "Error getting token", error, error.stack() ) ;
+			console.log( "Error getting token", error ) ;
 		}
+	}
+
+	loggedIn = () => {
+		return ( this.session !== null ) ;
 	}
 
   getSession = async () => {
@@ -66,6 +71,7 @@ export default class Security {
 			this.session = await Auth.currentSession() ;
 			await this.getCookies( this.session.getAccessToken().getJwtToken() ) ;
 
+			this.isAuthenticated = true ;
 			return this.session ;
 		}
 		catch(e) {
@@ -77,9 +83,20 @@ export default class Security {
 		}
 	}	
 
+	getUser = async () => { 
+
+		try {
+			var user = await Auth.currentAuthenticatedUser() ;
+			console.log( user ) ;
+		} catch (error) {
+			console.log( error ) ;
+		}
+	}
+
   signOut = async () => {
 		await Auth.signOut() ;
 		this.removeCookies() ;
+		this.authenticated = false ;
 		return ;
 	}
 
