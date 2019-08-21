@@ -1,4 +1,5 @@
 import React, { Fragment} from "react";
+import { withRouter } from "react-router-dom";
 import { Carousel, Button } from "react-bootstrap" ;
 import cookie from "react-cookies";
 import "./frontpage.css" ;
@@ -16,6 +17,7 @@ class FrontPage extends React.Component {
 		}
 
 		this.updateDimensions = this.updateDimensions.bind(this);
+		this.onClick = this.onClick.bind(this) ;
 	}
 
 	getPublicImages = async () => {
@@ -127,7 +129,7 @@ class FrontPage extends React.Component {
 	*/
 
 	onClick( event ) {
-		console.log( 'Clicked' ) ;
+		this.props.history.push('/home');
 	}
 
 	onSelect( event ) {
@@ -209,7 +211,7 @@ class FrontPage extends React.Component {
 				<div className="btn-parent">
 					<Button variant="outline-light" className="btn-wrap-text" onClick={this.onClick}>
 						<span className="name-text">Quyen Le Model</span>
-						<span className="soon-text">Coming Soon</span>
+						<span className="soon-text">Quyen Le Model</span>
 					</Button>
 				</div>
 				</div>
@@ -218,7 +220,7 @@ class FrontPage extends React.Component {
 	}
 }
 
-export default FrontPage ;
+export default withRouter(FrontPage) ;
 
 
 

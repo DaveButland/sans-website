@@ -1,5 +1,5 @@
 import React from "react"; //basic react
-import { withRouter, Route, Switch } from "react-router-dom" ; //react routing
+import { withRouter, Switch } from "react-router-dom" ; //react routing
 import ReactGA from "react-ga" ; //google analytics
 import AppliedRoute from "./AppliedRoute" ; //Don't need this really?
 
@@ -14,7 +14,13 @@ import Albums from "./website/albums" ;
 import Pages from "./website/pages" ;
 import Folders from "./website/folders" ;
 import FrontPage from "./website/frontpage" ;
-import NotFound from "./website/notfound" ;
+import Home from "./website/home" ;
+import Calendar1 from "./website/calendar1" ;
+import Contact from "./website/contact" ;
+import Bookings from "./website/bookings" ;
+import PortfolioPage from "./website/portfolioPage" ;
+//import Test from "./website/Test" ;
+//import NotFound from "./website/notfound" ;
 
 import Security from "./website/Security" ;
 
@@ -75,16 +81,21 @@ class App extends React.Component {
 				{ !this.state.isAuthenticated 
         ? <div className="test-style">
 						<Switch>
-          		<AppliedRoute exact path="/" component={FrontPage} props={childProps}/>
-							<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
-							<Route component={NotFound} />
+							<AppliedRoute exact path="/" component={FrontPage} props={childProps}/>
+							<AppliedRoute exact path="/home" component={Home} props={childProps}/>
+							<AppliedRoute exact path="/contact" component={Contact} props={childProps}/>
+							<AppliedRoute exact path="/booking" component={Bookings} props={childProps}/>
+							<AppliedRoute exact path="/calendar" component={Calendar1} props={childProps}/>
+							<AppliedRoute exact path="/signin" component={SignIn} props={childProps}/>
+							<AppliedRoute exact path="/portfolio" component={PortfolioPage} props={childProps}/>
+							<AppliedRoute component={FrontPage} props={childProps}/>
 						</Switch>
 					</div>
 				: <div className="test-style-nav">
 				  	<Header security={this.state.security} />
 						<Switch>
           		<AppliedRoute exact path="/" component={FrontPage} props={childProps}/>
-							<AppliedRoute path="/signin" exact component={SignIn} props={childProps}/>
+							<AppliedRoute exact path="/signin" component={SignIn} props={childProps}/>
 							<AppliedRoute path="/profile" component={Profile} props={childProps}/>
 							<AppliedRoute path="/pages" component={Pages} props={childProps}/>
 							<AppliedRoute path="/media" component={Media} props={childProps}/>
@@ -93,7 +104,7 @@ class App extends React.Component {
 							<AppliedRoute path="/folders/:folderid" component={Folders} props={childProps}/>
 							<AppliedRoute path="/images/:imageid" component={Images} props={childProps} />
 							<AppliedRoute path="/content" component={Content} props={childProps} />
- 							<Route component={NotFound} />
+ 							<AppliedRoute component={FrontPage} props={childProps}/>
 						</Switch>
 					</div>
 				}

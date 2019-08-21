@@ -1,0 +1,27 @@
+#my-sidebar {
+	position: fixed ;
+	background-color: #fffaf0	 ; 
+	padding: 10px ;
+}
+
+.sidebar {
+	max-width: 200px;
+}
+
+.ThuFaph4 { 
+	padding: 10px ;
+	font-family: "ThuFap", "Pacifico", serif;
+	font-size: 40px;
+	color: #e9ca87 ;
+	text-decoration: none !important ;
+}
+
+.abc:hover {
+	text-decoration: none !important ;
+}
+
+.ThuFaph4:hover {
+	font-weight: bold ;
+	text-decoration: none !important ;
+}
+

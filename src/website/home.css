@@ -1,0 +1,65 @@
+/*
+.home {
+	min-height: 75rem;
+  padding-top: 4rem;
+  margin-bottom: 60px;
+}
+*/
+
+.leadimage {
+	margin-top: -20%;
+	width: 100%;
+}
+
+.quyenlename {
+	padding: 10px ;
+	font-family: "ThuFap", "Pacifico", serif;
+	font-size: 70px;
+}
+
+.hometext {
+	text-align: justify;
+	font-size: 20px ;
+}
+
+.card-yellow {
+	background-color: #fffaf0 ;
+	border-radius:1rem!important
+}
+
+.testimonial-header {
+	font-size: 125% ;
+	font-weight: bold ;
+	text-align: center ;
+}
+
+.testimonial-name {
+	text-align: right ;
+	font-weight: bold ;
+}
+
+.portfolioName {
+	text-align: center ;
+	font-weight: bold ;
+}
+
+.portfolioImage {
+	filter: grayscale(100%);
+	border-top-left-radius:1rem!important ;
+	border-top-right-radius:1rem!important ;
+	border-bottom-left-radius:0rem!important;
+	border-bottom-right-radius:0rem!important;
+}
+
+.portfolioImageDisabled {
+	opacity: 0.2;
+}
+
+.photographer {
+	text-align: right ;
+	font-weight: bold ;
+}
+
+.rounded-2 {
+	border-radius:1rem!important
+}
