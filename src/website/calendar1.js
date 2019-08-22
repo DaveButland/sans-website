@@ -31,10 +31,10 @@ class Calendar1 extends React.Component {
 				{ start: new Date('August 4, 2019 00:00:00'), end: new Date('August 5, 2019 00:00:00' ), title: "Booked" }
 			,	{ start: new Date('August 8, 2019 00:00:00'), end: new Date('August 9, 2019 00:00:00' ), title: "Booked" }
 			,	{ start: new Date('August 13, 2019 00:00:00'), end: new Date('August 14, 2019 00:00:00' ), title: "Booked" }
-			,	{ start: new Date('August 16, 2019 00:00:00'), end: new Date('August 17, 2019 00:00:00' ), title: "Booked" }
-			,	{ start: new Date('September 13, 2019 00:00:00'), end: new Date('September 16 2019 00:00:00' ), title: "Wales" }
+			,	{ start: new Date('August 16, 2019 10:00:00'), end: new Date('August 16, 2019 16:00:00' ), title: "Booked" }
+			,	{ start: new Date('September 13, 2019 00:00:00'), end: new Date('September 16 2019 00:00:00' ), title: "Wales", type: "Location", allDay: true }
 			, { start: new Date('September 14, 2019 00:00:00'), end: new Date('September 16 2019 00:00:00' ), title: "Booked" }
-			, { start: new Date('September 18, 2019 00:00:00'), end: new Date('September 19 2019 00:00:00' ), title: "Booked" }
+			, { start: new Date('September 18, 2019 10:00:00'), end: new Date('September 18 2019 18:00:00' ), title: "Booked" }
 			, { start: new Date('September 20, 2019 00:00:00'), end: new Date('September 21 2019 00:00:00' ), title: "Booked" }
 			, { start: new Date('October 4, 2019 00:00:00'), end: new Date('October 7 2019 00:00:00' ), title: "Somerset" }
 			, { start: new Date('October 5, 2019 10:00:00'), end: new Date('October 5 2019 18:00:00' ), title: "Booked" }

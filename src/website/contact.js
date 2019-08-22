@@ -8,8 +8,11 @@ import './contact.css' ;
 //import { SingleDatePicker } from 'react-dates';
 //import 'react-dates/lib/css/_datepicker.css';
 
-import DateRangePicker from 'react-daterange-picker'
-import 'react-daterange-picker/dist/css/react-calendar.css' // For some basic styling. (OPTIONAL)
+import DatePicker from "react-datepicker" ;
+import "react-datepicker/dist/react-datepicker.css";
+
+//import DateRangePicker from 'react-daterange-picker'
+//import 'react-daterange-picker/dist/css/react-calendar.css' // For some basic styling. (OPTIONAL)
 
 class Contact extends React.Component {
 
@@ -20,6 +23,7 @@ class Contact extends React.Component {
 			type: ''
 		, date: null
 		, dates: null
+		, start: ''
 		, starttime:''
 		, endtime: ''
 		, name: '' 
@@ -31,9 +35,9 @@ class Contact extends React.Component {
 				color: null,
 				label: 'Available',
 			},
-			enquire: {
-				color: '#ffd200',
-				label: 'Enquire',
+			location: {
+				color: '#ff33ff',
+				label: 'On Tour',
 			},
 			unavailable: {
 				selectable: false,
@@ -43,27 +47,44 @@ class Contact extends React.Component {
 		};
 
 		this.dateRanges = [
-			{
-				state: 'enquire',
-				range: moment.range(
-					moment().add(2, 'weeks').subtract(5, 'days'),
-					moment().add(2, 'weeks').add(6, 'days')
-				),
-			},
-			{
-				state: 'unavailable',
-				range: moment.range(
-					moment().add(3, 'weeks'),
-					moment().add(3, 'weeks').add(5, 'days')
-				),
-			},
+//			{
+//				state: 'location',
+//				range: moment.range(
+//					moment().add(2, 'weeks').subtract(5, 'days'),
+//					moment().add(2, 'weeks').add(6, 'days')
+//				),
+//			},
+//			{
+//				state: 'unavailable',
+//				range: moment.range(
+//					moment().add(3, 'weeks'),
+//					moment().add(3, 'weeks').add(5, 'days')
+//				),
+//			},
+//			{
+//				state: 'location',
+//				range: moment.range( new Date( 'September 13 2019' ), new Date( 'September 16 2019')),
+//			}
 		];
+
+		const start = new Date( 'September 13 2019 00:00:00'  ) ;
+		const end   = new Date( 'September 16 2019 00:00:00' ) ;
+//		const range = moment.range( start, end ) ;
+
+//		console.log( start, end, range ) ;
+		this.handleDateChange = this.handleDateChange.bind(this) ;
 	}	
 
 	validateForm() {
     return this.state.date !=='' ;
   }
 
+	handleDateChange(date) {
+    this.setState({
+      start: date
+    });
+	}
+	
   handleChange = event => {
     this.setState( { [event.target.id]: event.target.value } ) ;
   }
@@ -106,37 +127,26 @@ class Contact extends React.Component {
 									/>
 									<Form.Text className="text-muted">Please enter your name</Form.Text>
   							</Form.Group>
-								<Form.Group controlId="subject">
-  		  					<Form.Label>Subject <span className="mandatory">*</span></Form.Label>
-   								<Form.Control type="text" placeholder="Subject" />
-									 <Form.Text className="text-muted">Subject of your message</Form.Text>
+								<Form.Group controlId="email">
+    							<Form.Label>Email <span className="mandatory">*</span></Form.Label>
+   								<Form.Control type="text" placeholder="Enter email address" />
+									<Form.Text className="text-muted">Please provide an email address for all communication</Form.Text>
   							</Form.Group>
 								<Form.Group controlId="portfolio">
   	  					<Form.Label>Portfolio <span className="mandatory">*</span></Form.Label>
    							<Form.Control type="text" placeholder="Enter URL for your portfolio" />
 								 <Form.Text className="text-muted">Please provide a link to examples of your work</Form.Text>
  							</Form.Group>
-								<Form.Group controlId="email">
-    							<Form.Label>Email <span className="mandatory">*</span></Form.Label>
-   								<Form.Control type="text" placeholder="Enter email address" />
-									<Form.Text className="text-muted">Please provide an email address for all communication</Form.Text>
-  							</Form.Group>
-								<Form.Group controlId="location">
-    							<Form.Label>Location <span className="mandatory">*</span></Form.Label>
-   								<Form.Control type="text" placeholder="Enter location details" />
-									<Form.Text className="text-muted">Please provide the location of the shoot</Form.Text>
-  							</Form.Group>
 							</Col>
 							<Col>
 							<Row>
 								<Col>
-								<	Form.Group controlId="date">
-    							<Form.Label>Date <span className="mandatory">*</span></Form.Label>
-   								<Form.Control type="text" placeholder="Date" 
-									 value={this.state.dates ? this.state.dates.format('LL') : ""}
-										readOnly={true}
+									<p>Date <span className="mandatory">*</span></p>
+ 									<DatePicker
+  								  selected={this.state.start}
+										onChange={this.handleDateChange}
+										dateFormat="dd/MM/yyyy"
 									/>
-   							</Form.Group>
 								 </Col>
 								 <Col>
 						 		<Form.Group controlId="starttime">
@@ -168,25 +178,20 @@ class Contact extends React.Component {
   							</Form.Group>
 								</Col>
 								</Row>
-								<Form.Group controlId="date">
-									<DateRangePicker
-          					onSelect={this.onSelect}
-										value={this.state.dates}
-										locale={moment().locale()}
-										firstOfWeek={1}
-										numberOfCalendars={2}
-										selectionType="single"
-										stateDefinitions={this.stateDefinitions}
-										dateStates={this.dateRanges}
-										defaultState="available"
-										showLegend={true}
-										minimumDate={new Date()}
-									/>   							
-								</Form.Group>
+								<Form.Group controlId="location">
+    							<Form.Label>Location <span className="mandatory">*</span></Form.Label>
+   								<Form.Control type="text" placeholder="Enter location details" />
+									<Form.Text className="text-muted">Please provide the location of the shoot</Form.Text>
+  							</Form.Group>
 					 		</Col>
 						</Row>
 						<Row>
-							<Col>
+						<Col>
+						<Form.Group controlId="subject">
+  		  					<Form.Label>Subject <span className="mandatory">*</span></Form.Label>
+   								<Form.Control type="text" placeholder="Subject" />
+									 <Form.Text className="text-muted">Subject of your message</Form.Text>
+  						</Form.Group>
 								<Form.Group controlId="message">
   		  					<Form.Label>Message</Form.Label>
 									<Form.Text className="text-muted">
