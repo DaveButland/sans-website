@@ -2,6 +2,19 @@
   color: #ff0000
 }
 
+.unavailable {
+	background-color: #2288ff ;
+}
+
+.booked {
+	background-color: #ff4488 ;
+}
+
+.touring {
+	background-color: #ff88ff ;
+}
+
 .DateRangePicker__Month {
 	margin-left: 0 !important;
 }
+

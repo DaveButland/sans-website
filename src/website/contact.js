@@ -1,7 +1,8 @@
 import React from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import Sidebar from './sidebar' ;
-import moment from 'moment' ;
+//import { addDays } from 'date-fns'
+//import moment from 'moment' ;
 import './contact.css' ;
 
 //import 'react-dates/initialize';
@@ -67,8 +68,8 @@ class Contact extends React.Component {
 //			}
 		];
 
-		const start = new Date( 'September 13 2019 00:00:00'  ) ;
-		const end   = new Date( 'September 16 2019 00:00:00' ) ;
+//		const start = new Date( 'September 13 2019 00:00:00'  ) ;
+//		const end   = new Date( 'September 16 2019 00:00:00' ) ;
 //		const range = moment.range( start, end ) ;
 
 //		console.log( start, end, range ) ;
@@ -106,6 +107,20 @@ class Contact extends React.Component {
 	onSelect = dates => {
 		this.setState({dates: dates})
 	}
+
+	getDateClassName = date => {
+		var type = Math.floor( Math.random() * 10 ) ;
+		if ( type === 1 )  {
+			return 'unavailable' ;
+		} else if ( type === 2 ) {
+			return 'touring' ;
+		} else if ( type === 3 ) {
+			return 'booked' ;
+		} else {
+			return 'available' ;
+		}
+
+	}
 	
 	render() {
     return (
@@ -124,12 +139,13 @@ class Contact extends React.Component {
 									<Form.Control 
 										type="text" 
 										placeholder="Enter Name" 
+										size="sm"
 									/>
 									<Form.Text className="text-muted">Please enter your name</Form.Text>
   							</Form.Group>
 								<Form.Group controlId="email">
     							<Form.Label>Email <span className="mandatory">*</span></Form.Label>
-   								<Form.Control type="text" placeholder="Enter email address" />
+   								<Form.Control type="text" placeholder="Enter email address" size="sm"/>
 									<Form.Text className="text-muted">Please provide an email address for all communication</Form.Text>
   							</Form.Group>
 								<Form.Group controlId="portfolio">
@@ -146,24 +162,26 @@ class Contact extends React.Component {
   								  selected={this.state.start}
 										onChange={this.handleDateChange}
 										dateFormat="dd/MM/yyyy"
+										dayClassName={this.getDateClassName}
+										minDate={new Date()}
 									/>
 								 </Col>
 								 <Col>
 						 		<Form.Group controlId="starttime">
     							<Form.Label>Time <span className="mandatory">*</span></Form.Label>
-   								<Form.Control type="text" placeholder="Time" />
+   								<Form.Control type="text" placeholder="Time" size="sm"/>
 									 <Form.Text className="text-muted">Enter preferred time</Form.Text>
+   							</Form.Group>
+								 </Col>
+								 <Col>
+								<Form.Group controlId="duration">
+    							<Form.Label>Duration <span className="mandatory">*</span></Form.Label>
+   								<Form.Control type="text" placeholder="Enter duration" size="sm"/>
+									 <Form.Text className="text-muted">Enter expected duration</Form.Text>
    							</Form.Group>
 								 </Col>
 								 </Row>
 								 <Row>
-								 <Col>
-								<Form.Group controlId="duration">
-    							<Form.Label>Duration <span className="mandatory">*</span></Form.Label>
-   								<Form.Control type="text" placeholder="Enter duration" />
-									 <Form.Text className="text-muted">Enter expected duration</Form.Text>
-   							</Form.Group>
-								 </Col>
 								 <Col>
 								 <Form.Group controlId="type">
     							<Form.Label>Type <span className="mandatory">*</span></Form.Label>

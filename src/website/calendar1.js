@@ -27,23 +27,49 @@ class Calendar1 extends React.Component {
     super(props, context);
 
 		this.state = {
-			events: [ 
-				{ start: new Date('August 4, 2019 00:00:00'), end: new Date('August 5, 2019 00:00:00' ), title: "Booked" }
-			,	{ start: new Date('August 8, 2019 00:00:00'), end: new Date('August 9, 2019 00:00:00' ), title: "Booked" }
-			,	{ start: new Date('August 13, 2019 00:00:00'), end: new Date('August 14, 2019 00:00:00' ), title: "Booked" }
-			,	{ start: new Date('August 16, 2019 10:00:00'), end: new Date('August 16, 2019 16:00:00' ), title: "Booked" }
-			,	{ start: new Date('September 13, 2019 00:00:00'), end: new Date('September 16 2019 00:00:00' ), title: "Wales", type: "Location", allDay: true }
-			, { start: new Date('September 14, 2019 00:00:00'), end: new Date('September 16 2019 00:00:00' ), title: "Booked" }
-			, { start: new Date('September 18, 2019 10:00:00'), end: new Date('September 18 2019 18:00:00' ), title: "Booked" }
-			, { start: new Date('September 20, 2019 00:00:00'), end: new Date('September 21 2019 00:00:00' ), title: "Booked" }
-			, { start: new Date('October 4, 2019 00:00:00'), end: new Date('October 7 2019 00:00:00' ), title: "Somerset" }
-			, { start: new Date('October 5, 2019 10:00:00'), end: new Date('October 5 2019 18:00:00' ), title: "Booked" }
-			, { start: new Date('October 7, 2019 00:00:00'), end: new Date('October 13 2019 00:00:00' ), title: "Cornwall" }
-			, { start: new Date('October 13, 2019 00:00:00'), end: new Date('October 14 2019 00:00:00' ), title: "Booked" }
-			]
+			events: []
 		};	
+
+		this.getEvents = this.getEvents.bind(this) ;
 	}	
-	
+
+	componentDidMount() {
+		this.setState({ isLoading: true });
+
+		this.getEvents() ;
+	}
+
+	componentWillUnmount() {
+	}
+
+	getEvents() {
+		var xhr = new XMLHttpRequest();
+
+		xhr.onerrror = function( error ) {
+			console.log( "Error getting folders", error, error ) ;
+		}
+
+		xhr.onload = function () {
+			var events = JSON.parse(xhr.responseText);
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				events.map( event => {
+					const start = moment( event.start, 'YYYYMMDDTHHmmss' ).toDate() ;
+					const end = moment( event.end, 'YYYYMMDDTHHmmss' ).toDate() ;
+					event.startDate = start ;
+					event.endDate = end ;
+				} ) ;
+
+				this.setState( { events: events, isLoading: false } ) ;
+			} else {
+				console.log( "Error getting events" ) ;
+			}
+		}.bind(this) ;
+
+		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/events?user=quyenle', true);
+		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+		xhr.send() ;
+	}
+
   render() {
     return (
       <Container fluid>
@@ -57,7 +83,9 @@ class Calendar1 extends React.Component {
           selectable
           localizer={localizer}
           defaultDate={new Date()}
-          defaultView="month"
+					defaultView="month"
+					startAccessor='startDate'
+					endAccessor='endDate'
           events={this.state.events}
 					style={{ height: "80vh" }}
 					scrollToTime={new Date("September 16 2019 07:00:00" )}

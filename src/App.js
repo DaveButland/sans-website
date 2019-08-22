@@ -96,6 +96,12 @@ class App extends React.Component {
 						<Switch>
           		<AppliedRoute exact path="/" component={FrontPage} props={childProps}/>
 							<AppliedRoute exact path="/signin" component={SignIn} props={childProps}/>
+							<AppliedRoute exact path="/home" component={Home} props={childProps}/>
+							<AppliedRoute exact path="/contact" component={Contact} props={childProps}/>
+							<AppliedRoute exact path="/booking" component={Bookings} props={childProps}/>
+							<AppliedRoute exact path="/calendar" component={Calendar1} props={childProps}/>
+							<AppliedRoute exact path="/signin" component={SignIn} props={childProps}/>
+							<AppliedRoute exact path="/portfolio" component={PortfolioPage} props={childProps}/>
 							<AppliedRoute path="/profile" component={Profile} props={childProps}/>
 							<AppliedRoute path="/pages" component={Pages} props={childProps}/>
 							<AppliedRoute path="/media" component={Media} props={childProps}/>
