@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Sidebar from './sidebar' ;
 
@@ -57,6 +57,7 @@ class Calendar1 extends React.Component {
 					const end = moment( event.end, 'YYYYMMDDTHHmmss' ).toDate() ;
 					event.startDate = start ;
 					event.endDate = end ;
+					return event ;
 				} ) ;
 
 				this.setState( { events: events, isLoading: false } ) ;
@@ -72,6 +73,9 @@ class Calendar1 extends React.Component {
 
   render() {
     return (
+			( this.state.isLoading
+			? <Fragment></Fragment>
+			:
       <Container fluid>
  				<Row>
 					<Col className="sidebar">
@@ -99,6 +103,7 @@ class Calendar1 extends React.Component {
 				</Col>
 				</Row>
 			</Container>
+			)
     );
   }
 }

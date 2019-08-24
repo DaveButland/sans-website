@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Row, Col, Image, Card } from 'react-bootstrap' ;
+import { Row, Col, Card } from 'react-bootstrap' ;
 
 class Portfolio extends React.Component {
 

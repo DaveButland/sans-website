@@ -3,15 +3,15 @@
 }
 
 .unavailable {
-	background-color: #2288ff ;
+	color: #071524 !important ;
 }
 
-.booked {
-	background-color: #ff4488 ;
+.booking {
+	color: #fa1d1d !important;
 }
 
-.touring {
-	background-color: #ff88ff ;
+.location {
+	color: #2dc4ff !important ;
 }
 
 .DateRangePicker__Month {
