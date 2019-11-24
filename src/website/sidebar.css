@@ -16,6 +16,14 @@
 	text-decoration: none !important ;
 }
 
+.ThuFaphBrand { 
+	padding: 0px ;
+	font-family: "ThuFap", "Pacifico", serif;
+	font-size: 40px;
+	color: #e9ca87 !important ;
+	text-decoration: none !important ;
+}
+
 .abc:hover {
 	text-decoration: none !important ;
 }

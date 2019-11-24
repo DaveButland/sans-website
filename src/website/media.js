@@ -1,5 +1,6 @@
 import React from "react";
-import { Container, Row, Col, ButtonToolbar, Button, ListGroup, Tab, Modal, InputGroup, FormControl, Card, CardColumns, ProgressBar }  from "react-bootstrap";
+import {LinkContainer} from "react-router-bootstrap" ;
+import { Container, Row, Col, ButtonToolbar, Button, ListGroup, Tab, Modal, InputGroup, FormControl, Card, CardColumns, ProgressBar, Dropdown }  from "react-bootstrap";
 import CircularProgressBar from "../CircularProgressBar/CircularProgressBar" ;
 import "./media.css";
 import EXIF from "exif-js" ;
@@ -581,6 +582,16 @@ class Media extends React.Component {
 		
 		this.setState( { selectedImages: selectedImages } ) ;
 	}
+
+	onImageSelect = ( eventKey, event ) => { 
+		var image = this.state.images[event.target.id] ;
+
+		if ( eventKey === 'addAlbum' ) {
+			console.log( 'add to album ' + image.imageId ) ;
+		} else if ( eventKey === 'delete' ) {
+			console.log( 'delete ' + image.imageId  ) ;
+		}
+	}
 	
 	/*
 	onSelectAllCardsClick() {
@@ -734,12 +745,12 @@ class Media extends React.Component {
 											{this.renderProgress(file)}
 										</Card.ImgOverlay>
 									</Card>
-              	);
+								);
+								
 							})}
             	{this.state.images.map( (image, index) => {
-								var border = "" ;
-								if ( image.selected ) { border = "primary" } 
 //								console.log( image.name + ' ' + image.height + ' ' + image.width ) ;
+/*
 								return (
 									<Card id={image.imageId} key={image.imageId} className={"px-1 py-1 mb-3"} bg={border} 
 										draggable
@@ -747,7 +758,29 @@ class Media extends React.Component {
 									>
 										<Card.Img id={image.imageId} onClick={this.onSelectImage} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+'-300'}/>
 									</Card>
-             		);
+								 );
+*/
+								 return (
+									<Card className="img-container" id={image.imageId} key={image.imageId} >
+									<Card.Img className="img-image" key={image.imageId} id={image.imageId} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+'-300' } alt="image.title" />
+									<Card.ImgOverlay className="img-overlay">
+										<Dropdown onSelect={this.onImageSelect} alignRight>
+											<Dropdown.Toggle className="float-right" variant="outline-secondary" size="sm" id="dropdown-basic">
+												Options
+ 									 		</Dropdown.Toggle>
+
+	 										<Dropdown.Menu>
+												<LinkContainer to={"/images/"+image.imageId}>
+											 		<Dropdown.Item>View</Dropdown.Item>
+												</LinkContainer>
+												<Dropdown.Item id={index} eventKey="album">Add to Album</Dropdown.Item>
+    										<Dropdown.Item id={index} eventKey="delete">Delete</Dropdown.Item>
+ 										 </Dropdown.Menu>
+										</Dropdown>
+									</Card.ImgOverlay>
+								</Card>
+								);
+
 							})}
 						</CardColumns>
 						</div>	
@@ -849,6 +882,29 @@ class Media extends React.Component {
 					<Button variant="danger" onClick={this.handleActionDeleteImage}>Delete</Button>
 				</Modal.Footer>
 			</Modal>
+
+				<Modal show={this.state.showAddToAlbum} onHide={this.handleCancelAddToAlbumImage}>
+					<Modal.Header closeButton>
+						<Modal.Title>Add To Album</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<p>Select Album</p>
+						<Dropdown alignRight>
+							<Dropdown.Toggle variant="secondary" size="sm" id="dropdown-basic">
+								Albums
+ 							</Dropdown.Toggle>
+
+	 						<Dropdown.Menu>
+							 	<Dropdown.Item>New</Dropdown.Item>
+								<Dropdown.Item>Fashion</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button variant="secondary" onClick={this.handleCancelDeleteImage}>Cancel</Button>
+						<Button variant="danger" onClick={this.handleActionDeleteImage}>Add</Button>
+					</Modal.Footer>
+				</Modal>
       </div>
 		) ;
 	}

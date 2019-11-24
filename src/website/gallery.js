@@ -2,9 +2,9 @@ import React, { Fragment} from "react";
 import { withRouter } from "react-router-dom";
 import { Carousel, Button } from "react-bootstrap" ;
 import cookie from "react-cookies";
-import "./frontpage.css" ;
+import "./gallery.css" ;
 
-class FrontPage extends React.Component {
+class Gallery extends React.Component {
 
 	constructor(props, context) {
     super(props, context);
@@ -17,7 +17,6 @@ class FrontPage extends React.Component {
 		}
 
 		this.updateDimensions = this.updateDimensions.bind(this);
-		this.onClick = this.onClick.bind(this) ;
 	}
 
 	getPublicImages = async () => {
@@ -30,10 +29,6 @@ class FrontPage extends React.Component {
 		xhr.onload = function () {
 			if (xhr.readyState === 4 && xhr.status === 200) {
 				let response = JSON.parse( xhr.response ) ;
-
-//				this.props.security.getAccessToken().then( function (accessToken ) { console.log( accessToken.getJwtToken() )} ) ;
-			
-				// check if logged in before setting cookie. Only set these cookies if not logged in
 
 				var key       = response.cookies["CloudFront-Key-Pair-Id"] ;
 				var policy    = response.cookies["CloudFront-Policy"] ;
@@ -58,39 +53,12 @@ class FrontPage extends React.Component {
 			}
 		}.bind(this) ;
 		
-//		this.props.security.getAccessToken().then( function (accessToken ) { 
-			
 		xhr.open( "GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/public?domain='+process.env.REACT_APP_HTML_DOMAIN, true ) ;
 		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-//		xhr.setRequestHeader('Authorization', 'Bearer '+accessToken ); - not required here
 		
 		xhr.send();
-//		console.log( accessToken.getJwtToken() )} ) ;
 	}
 	
-	getImages = () => {
-		this.props.security.getAccessToken().then( function( accessToken ) {
-			var xhr = new XMLHttpRequest();
-
-			xhr.onload = function () {
-				var images = JSON.parse(xhr.responseText);
-				if (xhr.readyState === 4 && xhr.status === 200) {
-					this.setState( { images: images } ) ;
-				} else {
-					alert( "Error getting images") ;
-				}
-			}.bind(this);
-
-			xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+this.state.folderId+'/images', true);
-			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-			xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken.getJwtToken() );
-			xhr.send();
-
-		}.bind(this)).catch( function ( error ) {
-			console.log( "Error getting images from folder " + error ) ;
-		}) ;
-	}
-
 	updateDimensions() {
 		const row = document.getElementsByClassName('measureRow')[0] ;
 
@@ -109,14 +77,14 @@ class FrontPage extends React.Component {
 
 	componentDidMount() {
 		window.addEventListener("resize", this.updateDimensions);
-		window.addEventListener("contextmenu", this.contextMenu);
+	//	window.addEventListener("contextmenu", this.contextMenu);
 		this.getPublicImages() ;
 		this.updateDimensions() ;
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener("resize", this.updateDimensions);
-		window.removeEventListener("contextmenu", this.contextMenu);
+	//	window.removeEventListener("contextmenu", this.contextMenu);
   }
 
 	/*
@@ -127,13 +95,6 @@ class FrontPage extends React.Component {
 	}
 	*/
 
-	onClick( event ) {
-		if ( this.props.security.loggedIn() )
-		{
-			this.props.history.push('/home');
-		}
-	}
-
 	onSelect( event ) {
 		console.log( event ) ;
 	} 
@@ -142,18 +103,15 @@ class FrontPage extends React.Component {
 	}
 
 	render() {
-//		var imageWidth = this.state.width-20 ;
-//		var imageHeight = this.state.height-20 ;
 		var imgStyle ;
-		const indicators = false ;
+		const indicators = true ;
 		const pauseOnHover = false ;
-		const fade = true ;
-		const controls = false ;
-		const interval = 2000 ;
+		const fade = false ;
+		const controls = true ;
+		const interval = null ;
 		var screenSize = this.state.width ;
 		if ( this.state.height > this.state.width ) { screenSize = this.state.height } ;
 		screenSize = Math.floor( screenSize / 300 + 1 ) * 300 ;
-//		console.log( screenSize ) ;
 
 		const nav = this.props.security.loggedIn() ;
 
@@ -162,7 +120,7 @@ class FrontPage extends React.Component {
 		{
 			carouselClass= "carousel-nav" ;
 		}
-//		const interval = null ;
+
 		return(
 			<Fragment>
 				<div className="measureRow">
@@ -200,36 +158,30 @@ class FrontPage extends React.Component {
 							if ( imageHeightOffset > imageHeightScaled - this.state.height ) { imageHeightOffset = imageHeightScaled - this.state.height ; }  
 							imgStyle = { width: '100vw', top: -imageHeightOffset } ;
 						} 
+
+//						imgStyle = {height: this.state.height} ;
+
       	    return (
 							<Carousel.Item key={image.imageId} >
 								{ screenSize > 1800 
-								?	(	<img className="fullimage" id={image.imageId} style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId} alt={image.name} /> )
-								: (	<img className="fullimage" id={image.imageId} style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-"+screenSize} alt={image.name} /> )
+								?	(	<img className="gallery-img" id={image.imageId} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId} alt={image.name} /> )
+								: (	<img className="gallery-img" id={image.imageId} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+"-"+screenSize} alt={image.name} /> )
 								}
 						    <Carousel.Caption>
-  						    <h3>First slide label</h3>
-      						<p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+  						    <h3>{image.title}</h3>
+      						<p>{image.description}</p>
    							</Carousel.Caption>
 							</Carousel.Item>
 						)
 					})}
 				</Carousel>
-				<div className="btn-parent">
-					<Button variant="outline-light" className="btn-wrap-text" onClick={this.onClick}>
-						<span className="name-text">Quyen Le Model</span>
-						{ nav
-						? <span className="soon-text">Quyen Le Model</span>
-						: <span className="soon-text">Coming Soon</span>
-						}
-					</Button>
-				</div>
 				</div>
 			</Fragment>
 		) ;
 	}
 }
 
-export default withRouter(FrontPage) ;
+export default withRouter(Gallery) ;
 
 
 

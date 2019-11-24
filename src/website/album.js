@@ -7,17 +7,40 @@ class Album extends React.Component {
     super(props, context);
 
 		this.state = {
-			selectedAlbumId: '',
-			albums: [],
-			images: [],
-			disabled: false
+			images: []
 		}
 	}
 
-  render() {
+	componentDidMount() {
+		this.setState({ isLoading: true });
+
+		this.getFolders() ;
+	}
+
+	componentWillUnmount() {
+	}
+
+	getAlbum = () => {
+		var xhr = new XMLHttpRequest();
+		
+		xhr.onload = function () {
+			var album = JSON.parse(xhr.responseText);
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				this.setState( { album: album, isLoading: false } ) ;
+			} else {
+				alert( "Error getting images") ;
+			}
+		}.bind(this);
+		
+		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/folders/'+this.state.folderId+'/images', true);
+		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+		xhr.send();
+	}
+		
+	render() {
 		return(
 			<Fragment> 
-				<h4>Title</h4>
+				<h4>{this.state.album.title}</h4>
 				<CardColumns
 					onDragOver={this.onDragOver}
 					onDragLeave={this.onDragLeave}

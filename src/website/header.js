@@ -47,10 +47,10 @@ class Header extends Component {
           </Nav>
           <Form inline>
             <Form.Control size="sm" type="text" placeholder="Search" className="mr-sm-2" />
-      	    <Button variant="outline-success" size="sm">Search</Button>
+      	    <Button className="mr-2" variant="outline-success" size="sm">Search</Button>
           </Form>
 					<LinkContainer to="/" activeClassName="">
-	          <Button className="mx-2" variant="outline-danger" onClick={this.handleLogout} size="sm">Signout</Button>
+	          <Button variant="outline-danger" onClick={this.handleLogout} size="sm">Signout</Button>
 					</LinkContainer>
       	</Navbar.Collapse>
       </Navbar>

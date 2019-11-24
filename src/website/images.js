@@ -1,7 +1,8 @@
 import React from "react";
-import { Container, Row, Col, Button, Form, FormControl, Image }  from "react-bootstrap";
+import { Container, Row, Card, Button }  from "react-bootstrap";
+import "./images.css" ;
 
-class Folders extends React.Component {
+class Images extends React.Component {
 
   constructor(props, context) {
     super(props, context);
@@ -18,10 +19,12 @@ class Folders extends React.Component {
 			name: '' 
 		};
 
+		this.onBack = this.onBack.bind(this);
 	}
 
 	componentDidMount() {
 		this.setState( { isLoading: true } ) ;
+
 		this.getImage() ;
 	}
 
@@ -29,54 +32,74 @@ class Folders extends React.Component {
 	}
 
 	getImage() {
-		this.props.security.getAccessToken().then( function( accessToken ) {
-			var xhr = new XMLHttpRequest();
+		var xhr = new XMLHttpRequest();
 
-			xhr.onerrror = function( error ) {
-				console.log( "Error getting image", error ) ;
+		xhr.onerrror = function( error ) {
+			console.log( "Error getting image", error ) ;
+		}
+
+		xhr.onload = function () {
+			var image = JSON.parse(xhr.responseText);
+			if (xhr.readyState === 4 && xhr.status === 200) {
+
+				if (!image.description) { image.description ='' } ;
+				if (!image.title) { image.title ='' } ;
+				if (!image.centreX) { image.centreX = Math.round( image.width / 2 )  } ;
+				if (!image.centreY) { image.centreY = Math.round( image.height / 2 )  } ;
+				this.setState( { image: image, isLoading: false } ) ;
+			} else {
+				console.log( "Error getting image" ) ;
 			}
+		}.bind(this) ;
 
-			xhr.onload = function () {
-				var image = JSON.parse(xhr.responseText);
-				if (xhr.readyState === 4 && xhr.status === 200) {
-
-					if (!image.description) { image.description ='' } ;
-					if (!image.title) { image.title ='' } ;
-					if (!image.centreX) { image.centreX = Math.round( image.width / 2 )  } ;
-					if (!image.centreY) { image.centreY = Math.round( image.height / 2 )  } ;
-					this.setState( { image: image, isLoading: false } ) ;
-				} else {
-					console.log( "Error getting image" ) ;
-				}
-			}.bind(this) ;
-
-			xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/'+this.props.match.params.imageid, true);
-			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-			xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken.getJwtToken() );
-			xhr.send() ;
-		}.bind(this)).catch ( function (error ) {
-			console.log( "Error getting access token", error ) ;
-		});
+		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/images/'+this.props.match.params.imageid, true);
+		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+		xhr.send() ;
 	}
 
-	onChange = event => {
-    this.setState({
-      [event.target.id]: event.target.value
-    });
+	onBack = event => {
+		event.preventDefault() ;
+
+		this.props.history.goBack()
 	}
-	
+
   render() {
 
-//		console.log( this.state.image ) ;
-		const imgStyle = { height: '80vh' } ;
+//		var imgStyle = { width:'100%', marginLeft: 'auto', marginRight: 'auto'} ;
+		var imgClass = "card-img-portrait" ;
+
+		if ( this.state.image )
+		{
+			if ( this.state.image.height / this.state.image.width > 0.75 )
+			{
+//				imgStyle = { height:'80vh', marginLeft: 'auto', marginRight: 'auto'} ;
+				imgClass = "card-img-portrait" ;
+			}
+		}
+
+//		console.log( imgStyle ) ;
+
 		return (
-			<Container fluid className="mt-15">
-				<h3>{this.state.image.imageTitle}</h3>
-				<Row>
-					<Col lg={4}>
-						<Image style={imgStyle} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+this.state.image.folderId+"/"+this.state.image.imageId}></Image>
-					</Col>
-					<Col lg={6}>
+			!(this.state.isLoading) &&
+			<Container fluid>
+				<Row className="justify-content-md-center">
+					<Card>
+						<Card.Header>
+						<h3 className="d-inline">{this.state.image.title}</h3>
+						<Button className="float-right" variant="success" onClick={this.onBack} size="sm">Back</Button>
+						<Button className="float-right mr-2" variant="secondary" size="sm">Fit</Button>
+						<Button className="float-right mr-2" variant="secondary" size="sm">Fill</Button>
+						<Button className="float-right mr-2" variant="secondary" size="sm">1:1</Button>
+						</Card.Header>
+						<Card.Img className={imgClass} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+this.state.image.folderId+"/"+this.state.image.imageId+'-1800'} />
+					</Card>
+				</Row>
+			</Container>
+		) ;
+	}
+			
+	/*
+				<Col lg={6}>
 						<Form>
 							<Form.Row>
 								<Form.Group as={Col} controlId="Description">
@@ -110,9 +133,10 @@ class Folders extends React.Component {
 						</Form>
 					</Col>
 				</Row>
-			</Container>
+
 		);
 	}
+	*/
 }
 
-export default Folders ;
+export default Images ;

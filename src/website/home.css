@@ -44,7 +44,6 @@
 }
 
 .portfolioImage {
-	filter: grayscale(100%);
 	border-top-left-radius:1rem!important ;
 	border-top-right-radius:1rem!important ;
 	border-bottom-left-radius:0rem!important;

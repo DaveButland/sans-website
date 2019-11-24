@@ -1,77 +1,74 @@
 import React, { Fragment } from "react";
 import { Row, Col, Card } from 'react-bootstrap' ;
+import { LinkContainer } from 'react-router-bootstrap' ;
 
 class Portfolio extends React.Component {
 
-  render() {
+	constructor(props, context) {
+    super(props, context);
+
+		this.state = {
+			albums: []
+		}
+	}
+
+	componentDidMount() {
+		this.setState({ isLoading: true });
+
+		this.getAlbums() ;
+	}
+
+	componentWillUnmount() {
+	}
+
+	getAlbums = () => {
+		var xhr = new XMLHttpRequest();
+		
+		xhr.onload = function () {
+			var albums = JSON.parse(xhr.responseText);
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				this.setState( { albums: albums, isLoading: false } ) ;
+			} else {
+				alert( "Error getting images") ;
+			}
+		}.bind(this);
+		
+		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/albums', true);
+		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+		xhr.send();
+	}
+
+	render() {
     return (
       <Fragment>
 				<h1 id="portfolio" align="center">Portfolio</h1>
 				<Row>
-					<Col>
-						<Card className="card-yellow">
-							<Card.Img className="portfolioImage portfolioImage" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/2e9dee30-eaa0-4721-9608-67e189a33b68-900"/>
-							<Card.Footer className="portfolioName">
-								Fasion
-							</Card.Footer>
-						</Card>
-						<p></p>
-						<Card className="card-yellow">
-							<Card.Img className="portfolioImage" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/2e9dee30-eaa0-4721-9608-67e189a33b68-900"/>
-							<Card.Footer className="portfolioName">
-								Portrait
-							</Card.Footer>
-						</Card>
-					</Col>
-					<Col>
-						<Card className="card-yellow">
-							<Card.Img className="portfolioImage" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/2e9dee30-eaa0-4721-9608-67e189a33b68-900"/>
-							<Card.Footer className="portfolioName">
-								Location
-							</Card.Footer>
-						</Card>
-						<p></p>
-						<Card className="card-yellow">
-							<Card.Img className="portfolioImage" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/2e9dee30-eaa0-4721-9608-67e189a33b68-900"/>
-							<Card.Footer className="portfolioName">
-								Black and White
-							</Card.Footer>
-					</Card>
-					</Col>
-					<Col>
-						<Card className="card-yellow">
-							<Card.Img className="portfolioImage" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/2e9dee30-eaa0-4721-9608-67e189a33b68-900"/>
-							<Card.Footer className="portfolioName">
-								Narrative
-							</Card.Footer>
-						</Card>
-						<p></p>
-						<Card className="card-yellow">
-							<Card.Img className="portfolioImage" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/2e9dee30-eaa0-4721-9608-67e189a33b68-900"/>
-							<Card.Footer className="portfolioName">
-								Selfies
-							</Card.Footer>
-						</Card>
-					</Col>
-					<Col>
-						<Card className="card-yellow">
-							<Card.Img className="portfolioImageDisabled" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/2e9dee30-eaa0-4721-9608-67e189a33b68-900"/>
-							<Card.Footer className="portfolioName">
-								Lingerie
-							</Card.Footer>
-						</Card>
-						<p></p>
-						<Card className="card-yellow">
-							<Card.Img className="portfolioImageDisabled" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/2e9dee30-eaa0-4721-9608-67e189a33b68-900"/>
-							<Card.Footer className="portfolioName">
-								Art Nude
-							</Card.Footer>
-						</Card>
-					</Col>
+						{this.state.albums.map( album => {
+							var imgClass = "portfolioImage"
+							if ( album.private ) {
+								return ( <Fragment key={album.albumid}></Fragment> )
+							} else {
+								return (
+									<Col lg={3} key={album.albumid} className={"px-1 py-1"} >
+										<Card className="card-yellow" style={{height:300+'px'}}>
+											<div style={{overflow:'hidden', cursor:'pointer'}}>
+											<LinkContainer to={"/portfolio/"+album.albumid}>
+												<Card.Img className={imgClass} style={{width:100+'%', height:'auto'}} src={"https://quyen-le-model.com/thumbnail/"+album.cover.folder+"/"+album.cover.image+"-300"}/>
+											</LinkContainer>
+											</div>
+											<Card.Footer className="portfolioName">
+												{album.title}
+											</Card.Footer>
+										</Card>
+									</Col>
+								);
+							}
+						})}
 				</Row>
 			</Fragment>
-		) ;
+		);
 	}
+		
 }
 
 export default Portfolio ;

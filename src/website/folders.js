@@ -3,6 +3,21 @@ import { Container, Row, Col, ButtonToolbar, Button, ListGroup, Modal, InputGrou
 import { LinkContainer } from "react-router-bootstrap" ;
 import Folder from "./folder" ;
 
+function compareFolders(a, b) {
+  // Use toUpperCase() to ignore character casing
+  const folderNameA = a.folderName.toUpperCase();
+  const folderNameB = b.folderName.toUpperCase();
+
+	let comparison = 0;
+	
+  if (folderNameA > folderNameB) {
+    comparison = -1 ;
+  } else if (folderNameA < folderNameB) {
+    comparison = 1;
+  }
+  return comparison;
+}
+
 class Folders extends React.Component {
 
   constructor(props, context) {
@@ -56,12 +71,15 @@ class Folders extends React.Component {
 			var xhr = new XMLHttpRequest();
 
 			xhr.onerrror = function( error ) {
-				console.log( "Error getting folders", error, error ) ;
+				console.log( "Error getting folders", error ) ;
 			}
 
 			xhr.onload = function () {
 				var folders = JSON.parse(xhr.responseText);
 				if (xhr.readyState === 4 && xhr.status === 200) {
+					if ( folders.length > 0 ) {
+						folders.sort( compareFolders ) ;
+					}
 					this.setState( { folders: folders, isLoading: false } ) ;
 				} else {
 					console.log( "Error getting folders" ) ;

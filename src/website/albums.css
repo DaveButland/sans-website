@@ -1,0 +1,49 @@
+.img-container {
+	border-width: 5px;
+}
+
+.img-overlay {
+	opacity: 0.0;
+}
+
+.img-selected {
+	border-color: #007700
+}
+
+.img-image {
+	transition: opacity 1s ease-in-out;
+	-moz-transition: opacity 1s ease-in-out;
+	-webkit-transition: opacity 1s ease-in-out;
+	transition: filter 1s ease-in-out;
+	-moz-transition: filter 1s ease-in-out;
+	-webkit-transition: filter 1s ease-in-out;
+}
+
+.img-title {
+	position: absolute;
+	margin:0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.img-container:hover .img-image {
+	opacity: 0.5;
+	filter: grayscale(100%);
+	transition: opacity .55s ease-in-out;
+	-moz-transition: opacity .55s ease-in-out;
+	-webkit-transition: opacity .55s ease-in-out;
+	transition: filter .55s ease-in-out;
+	-moz-transition: filter .55s ease-in-out;
+	-webkit-transition: filter .55s ease-in-out;
+}
+
+.img-container:hover {
+	cursor: pointer ;
+  border-color: #000000;
+}
+
+.img-container:hover .img-overlay {
+  opacity: 1.0;
+}
+

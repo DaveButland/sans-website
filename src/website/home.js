@@ -11,7 +11,6 @@ class Home extends React.Component {
 			<Container fluid>
 				<Row>
 					<Col className="sidebar">
-						<Sidebar />
 					</Col>
 					<Col>
 						<Image className="leadimage rounded-2" src="https://quyen-le-model.com/thumbnail/b79d8427-8919-4e66-8af7-c0597702a812/daff3c06-980a-4899-a54c-8f346191ed00-900" />
@@ -34,6 +33,7 @@ class Home extends React.Component {
 				<p className="hometext">
 					I am currently modelling full time, having just finished my Master’s Degree. 
 					However, this is likely to change in the near future so if you would like to work with me, now is a good time to do so. 
+					To get in touch with me, please follow this link and fill in the contact form. I will get back to you as soon as possible. 
 				</p>
 				<Row>
 					<Col sm={true}>
@@ -55,10 +55,10 @@ class Home extends React.Component {
 							<Card.Text>
 								This was my second shoot with Quyen and I'm looking forward to another.
 							</Card.Text>
-							<Card.Text className="testimonial-name">
-								Mark Fiddian
-							</Card.Text>
 							</Card.Body>
+							<Card.Footer className="blockquote-footer">
+								Mark Fiddian
+							</Card.Footer>
 						</Card>
 					</Col>
 					<Col sm={true}>

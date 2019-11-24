@@ -1,5 +1,6 @@
 import React, { Fragment} from "react";
-import { CardColumns, Card, ButtonToolbar, Button} from "react-bootstrap" ;
+import { withRouter } from "react-router-dom" ;
+import { Modal, Form, InputGroup, CardColumns, Card, ButtonToolbar, Button, Dropdown } from "react-bootstrap" ;
 
 class Folder extends React.Component {
 
@@ -11,14 +12,108 @@ class Folder extends React.Component {
 			folderId: '',
 			images: [],
 			files: [],
+			albums: [],
+			newAlbumTitle: '',
+			showAddToAlbum: false,
+			selectedAlbumIndex: -2, 
       height: window.innerHeight, 
 			width: window.innerWidth, 
 			idealWidth: 206
 		}
 
 		this.updateDimensions = this.updateDimensions.bind(this);
+
+		this.handleShowAddToAlbum = this.handleShowAddToAlbum.bind(this);
+		this.handleCancelAddToAlbum = this.handleCancelAddToAlbum.bind(this);
+		this.handleShowAddToNewAlbum = this.handleShowAddToNewAlbum.bind(this);
+		this.handleCancelAddToNewAlbum = this.handleCancelAddToNewAlbum.bind(this);
+//		this.handleActionAddToAlbum = this.handleActionAddToAlbum.bind(this);
+		this.handleSelectChange = this.handleSelectChange.bind(this);
 	}
 
+	getAlbums = () => {
+		var xhr = new XMLHttpRequest();
+
+		xhr.onerrror = function( error ) {
+			console.log( "Error getting albums", error ) ;
+		}
+
+		xhr.onload = function () {
+			var albums = JSON.parse(xhr.responseText);
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				this.setState( { albums: albums, isLoading: false  } ) ;
+			} else {
+				console.log( "Error getting albums") ;
+			}
+		}.bind(this) ;
+
+		xhr.open("GET", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/albums', true);
+		xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+		xhr.send() ;
+	}
+
+	createAlbum = ( album ) => {
+
+		this.props.security.getAccessToken().then( function( accessToken ) {
+			var xhr = new XMLHttpRequest();
+		
+			var json = JSON.stringify( album ) ;
+		
+			xhr.onerror = function( error ) {
+				console.log( "Error creating album " + error ) ;
+			}
+		
+			xhr.onload = function () {
+				var album = JSON.parse(xhr.responseText);
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					var albums = this.state.albums ;
+					albums.push( album ) ;
+					this.setState( { albums: albums } ) ;
+				} else {
+					console.log( "Error creating image" ) ;
+				}
+			}.bind(this);
+		
+			xhr.open("POST", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/albums', true);
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken.getJwtToken() );
+			xhr.send(json);
+		
+		}.bind(this)).catch( function ( error ) {
+			console.log( "Error updating image " + error ) ;
+		}) ;
+	}
+		
+	updateAlbum = ( album ) => {
+
+		this.props.security.getAccessToken().then( function( accessToken ) {
+			var xhr = new XMLHttpRequest();
+		
+			var json = JSON.stringify( album ) ;
+		
+			xhr.onerror = function( error ) {
+				console.log( "Error updating album " + error ) ;
+			}
+		
+			xhr.onload = function () {
+//				var album = JSON.parse(xhr.responseText);
+				if (xhr.readyState === 4 && xhr.status === 200) {
+//					console.log( album ) ;
+				} else {
+					console.log( "Error updating image" ) ;
+				}
+			}; //.bind(this);
+		
+			xhr.open("PUT", 'https://'+process.env.REACT_APP_APIS_DOMAIN+'/albums/'+album.albumid, true);
+			xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+			xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken.getJwtToken() );
+			xhr.send(json);
+		
+		}).catch( function ( error ) {
+			console.log( "Error updating image " + error ) ;
+		}) ;
+	}
+		
 	getImages = () => {
 //		console.log( "getImages" ) ;
 		this.props.security.getAccessToken().then( function( accessToken ) {
@@ -154,19 +249,24 @@ class Folder extends React.Component {
 			colWidth: col, 
 			imageWidth: image
 		});
-
-//		const card = document.getElementsByClassName('cardimage')[0];
-
-//		if ( card ) {
-//			console.log( card.height ) ;
-//			console.log( card.width ) ;
-//		}
   }
+
+	onImageSelect = ( eventKey, event ) => {
+		
+		var image = this.state.images[event.target.id] ;
+
+		if ( eventKey === 'album' ) {
+			this.setState( { image: image, showAddToAlbum: true })
+		} else if ( eventKey === 'delete' ) {
+			console.log( 'Delete ' + image.imageId ) ;
+		}
+	}
 
 	componentDidMount() {
 //		console.log( "componentDidMount" ) ;
 		window.addEventListener("resize", this.updateDimensions);
 		this.getImages() ;
+		this.getAlbums() ;
 		window.dispatchEvent(new Event('resize'));
 	}
 
@@ -195,6 +295,128 @@ class Folder extends React.Component {
 		 	this.getImages() ; 
 		 	this.updateDimensions() ;
 		} 
+	}
+
+	handleShowAddToAlbum() {
+		this.setState( { showAddToAlbum: true } ) ;
+	}
+	
+	handleCancelAddToAlbum() {
+		this.setState( { showAddToAlbum: false } ) ;
+	}
+	
+
+	handleShowAddToNewAlbum() {
+		this.setState( { showAddToNewAlbum: true } ) ;
+	}
+	
+	handleCancelAddToNewAlbum() {
+		this.setState( { showAddToNewAlbum: false } ) ;
+	}
+
+	handleSubmitAddAlbum = event => {
+		event.preventDefault() ;
+
+		var album = this.state.selectedAlbum ;
+		var image = { image: this.state.image.imageId, folder: this.state.image.folderId } ;
+
+		album.images.push( image ) ;
+
+		this.updateAlbum( album ) ;
+
+		this.setState( { showAddToAlbum: false } ) ;
+	}
+
+	handleSubmitAddNewAlbum = event => {
+		event.preventDefault() ;
+
+		var image = { image: this.state.image.imageId, folder: this.state.image.folderId } ;
+		var album = { title: this.state.newAlbumTitle, cover: image, images: [image], private: true } ;
+
+		this.createAlbum( album ) ;
+
+		this.setState( { showAddToNewAlbum: false } ) ;
+	}
+
+	handleChange = event => {
+    this.setState({
+      [event.target.id]: event.target.value
+    });
+	}
+
+	handleSelectChange = event => {
+		var index = event.target.options[event.target.options.selectedIndex].value ;
+		if ( index === "-2" ) {
+				this.setState( { selectedAlbumIndex: -1, selectedAlbum: null }) ;
+		} else if ( index === "-1" ) {
+			this.setState( { showAddToAlbum: false, showAddToNewAlbum: true } ) ;
+		} else {
+			this.setState( { selectedAlbumIndex: index, selectedAlbum: this.state.albums[index] }) ;
+		}
+	}
+
+	handleImageClick = event => {
+		if ( event.target.id === "overlay" )
+		{
+			this.props.history.push('/images/'+event.target.parentNode.id) ;
+		}
+	}
+	
+	renderAddToAlbum() {
+		var disable = ( this.state.selectedAlbumIndex === -2 ) ;
+		return (
+			<Modal show={this.state.showAddToAlbum} onHide={this.handleCancelAddToAlbum}>
+			<Form onSubmit={this.handleSubmitAddAlbum}>
+				<Modal.Header closeButton>
+					<Modal.Title>Add to Album</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<InputGroup className="mb-3">
+						<InputGroup.Prepend>
+							<InputGroup.Text id="albumlabel">Album Name</InputGroup.Text>
+						</InputGroup.Prepend>
+						<Form.Control id="test" required value={this.state.selectedAlbumIndex} as="select" onChange={this.handleSelectChange}>
+							<option hidden key={-2} value={-2}>select album ...</option>
+							<option key={-1} value={-1}>New Album</option>
+							{ this.state.albums.map( ( album, index ) => {
+								return ( <option key={index} value={index}>{album.title}</option> ) ;
+							})}
+				    </Form.Control>
+					</InputGroup>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={this.handleCancelAddToAlbum}>Cancel</Button>
+					<Button variant="primary" type="submit" disabled={disable}>Add</Button>
+				</Modal.Footer>
+				</Form>
+			</Modal>
+		) ;
+	}
+ 
+	renderAddToNewAlbum() {
+		var disable = this.state.newAlbumTitle === '' ;
+		return (
+			<Modal show={this.state.showAddToNewAlbum} onHide={this.handleCancelAddToNewAlbum}>
+			<Form onSubmit={this.handleSubmitAddNewAlbum}>
+				<Modal.Header closeButton>
+					<Modal.Title>Add to Album</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<InputGroup className="mb-3">
+						<InputGroup.Prepend>
+							<InputGroup.Text id="albumlabel">Album Name</InputGroup.Text>
+						</InputGroup.Prepend>
+						<Form.Control id="newAlbumTitle" required placeholder="Enter New Album Name" value={this.state.newAlbumTitle} onChange={this.handleChange}>
+				    </Form.Control>
+					</InputGroup>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={this.handleCancelAddToNewAlbum}>Cancel</Button>
+					<Button variant="primary" type="submit" disabled={disable}>Create</Button>
+				</Modal.Footer>
+				</Form>
+			</Modal>
+		) ;
 	}
  
 	render() {
@@ -234,7 +456,7 @@ class Folder extends React.Component {
             	);
 						})}
 									
-						{this.state.images.map( image => {
+						{this.state.images.map( ( image, index ) => {
 							var border = "" ;
 							if ( image.selected ) { border = "primary" } 
 
@@ -242,22 +464,38 @@ class Folder extends React.Component {
 							const imageHeight = Math.floor( image.height / image.width * this.state.imageWidth ) ;
 
       	      return (
-								<Card id={image.imageId} style={{width:this.state.col}} key={image.imageId} className={"px-1 py-1 mb-3"} bg={border} 
+								<Card id={image.imageId} style={{width:this.state.col}} key={image.imageId} className="img-container" bg={border} 
 									draggable
 //									className="draggable"
 								>
-									<Card.Img id={image.imageId} className="cardimage" style={{width: imageWidth, height: imageHeight }} onClick={this.onSelectImage} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+'-300'}/>
+									<Card.Img className="img-image" id={image.imageId} style={{width: imageWidth, height: imageHeight }} onClick={this.onSelectImage} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+'-300'}/>
+									<Card.ImgOverlay className="img-overlay" id="overlay" onClick={this.handleImageClick}>
+										<Dropdown onSelect={this.onImageSelect} alignRight>
+											<Dropdown.Toggle className="float-right" variant="outline-secondary" size="sm" id="dropdown-basic">
+												Options
+ 									 		</Dropdown.Toggle>
+
+	 										<Dropdown.Menu>
+												<Dropdown.Item id={index} eventKey="album">Add to Album</Dropdown.Item>
+    										<Dropdown.Item id={index} eventKey="delete">Delete</Dropdown.Item>
+ 										 </Dropdown.Menu>
+										</Dropdown>
+									</Card.ImgOverlay>
 								</Card>
             	);
 						})}
 					</CardColumns>
-				</div>	
+				</div>
+
+				{this.renderAddToAlbum()}
+				{this.renderAddToNewAlbum()}
+
 			</Fragment>
 		) ;
 	}
 }
 
-export default Folder ;
+export default withRouter(Folder) ;
 
 
 
