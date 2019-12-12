@@ -114,30 +114,13 @@ class SignIn extends Component {
 					<h1>Sign In</h1>
           <Form.Group controlId="username">
             <Form.Label>Username</Form.Label>
-						<Form.Control 
-							autoFocus
-							type="username" 
-							placeholder="Enter username" 
-							value={this.state.username}
-							onChange={this.handleChange}
-						/>
+						<Form.Control autoFocus type="username" placeholder="Enter username" value={this.state.username} onChange={this.handleChange} />
           </Form.Group>
           <Form.Group controlId="password">
-            <Form.Label>Password</Form.Label>
-						<Form.Control 
-							type="password" 
-							placeholder="Enter password" 
-							value={this.state.password}
-							onChange={this.handleChange}
-						/>
+						<Form.Label>Password</Form.Label>
+						<Form.Control type="password" placeholder="Enter password" value={this.state.password} onChange={this.handleChange} />
           </Form.Group>
-					<Button
-            block
-            disabled={!this.validateForm()}
-            type="submit"
- 		      >
-	      		Sign In
-          </Button>
+					<Button block disabled={!this.validateForm()} type="submit">Sign In</Button>
 					<Button block variant="secondary" onClick={this.handleActionForgot} disabled>Forgot Password</Button>
 					<Button block variant="secondary" onClick={this.handleActionSignup} >Sign Up</Button>
  				</Form>	

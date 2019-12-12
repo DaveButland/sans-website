@@ -468,7 +468,7 @@ class Folder extends React.Component {
 									draggable
 //									className="draggable"
 								>
-									<Card.Img className="img-image" id={image.imageId} style={{width: imageWidth, height: imageHeight }} onClick={this.onSelectImage} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/thumbnail/"+image.folderId+"/"+image.imageId+'-300'}/>
+									<Card.Img className="img-image" id={image.imageId} style={{width: imageWidth, height: imageHeight }} onClick={this.onSelectImage} src={"https://"+process.env.REACT_APP_HTML_DOMAIN+"/private/"+image.folderId+"/"+image.imageId}/>
 									<Card.ImgOverlay className="img-overlay" id="overlay" onClick={this.handleImageClick}>
 										<Dropdown onSelect={this.onImageSelect} alignRight>
 											<Dropdown.Toggle className="float-right" variant="outline-secondary" size="sm" id="dropdown-basic">
