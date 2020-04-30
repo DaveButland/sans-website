@@ -12,7 +12,7 @@
     "date-fns": "^2.0.0",
     "exif-js": "^2.3.0",
     "jodit-react": "^1.0.26",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "lazy-load": "0.0.2",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
