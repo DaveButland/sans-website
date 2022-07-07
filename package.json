@@ -14,7 +14,7 @@
     "jodit-react": "^1.0.26",
     "jquery": "^3.4.1",
     "lazy-load": "0.0.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "moment-range": "^4.0.2",
     "react": "^16.8.6",
     "react-big-calendar": "^0.22.0",
